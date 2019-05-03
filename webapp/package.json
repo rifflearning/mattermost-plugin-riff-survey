@@ -1,0 +1,44 @@
+{
+  "name": "webapp",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/index.js",
+  "scripts": {
+    "build": "webpack --mode=production",
+    "lint": "eslint --ignore-pattern node_modules --ignore-pattern dist --ext .js --ext .jsx . --quiet",
+    "fix": "eslint --ignore-pattern node_modules --ignore-pattern dist --ext .js --ext .jsx . --quiet --fix"
+  },
+  "author": "",
+  "license": "",
+  "devDependencies": {
+    "babel-core": "^6.26.3",
+    "babel-eslint": "^8.2.6",
+    "babel-loader": "^7.1.5",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
+    "css-loader": "^2.1.1",
+    "eslint": "^5.16.0",
+    "eslint-config-mattermost": "github:mattermost/eslint-config-mattermost",
+    "eslint-import-resolver-webpack": "^0.10.1",
+    "eslint-plugin-header": "2.0.0",
+    "eslint-plugin-import": "2.14.0",
+    "eslint-plugin-react": "7.11.1",
+    "style-loader": "^0.19.0",
+    "url-loader": "^1.1.2",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.0.8"
+  },
+  "dependencies": {
+    "core-js": "^2.5.7",
+    "mattermost-redux": "^5.10.0",
+    "prop-types": "15.6.2",
+    "react": "16.7.0",
+    "react-bootstrap": "0.32.4",
+    "react-redux": "5.1.1",
+    "redux": "4.0.1",
+    "superagent": "3.8.3"
+  }
+}
