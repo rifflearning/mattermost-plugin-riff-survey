@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/mattermost/mattermost-server/plugin"
+	"github.com/pkg/errors"
 	"go.uber.org/atomic"
 )
 
@@ -22,6 +23,10 @@ var (
 )
 
 type Configuration struct {
+	BotUsername string `json:"BotUsername"`
+
+	// Derived Attributes
+	BotUserID string
 }
 
 func GetConfig() *Configuration {
@@ -34,6 +39,13 @@ func SetConfig(c *Configuration) {
 
 func (c *Configuration) ProcessConfiguration() error {
 	// any post-processing on configurations goes here
+
+	user, err := Mattermost.GetUserByUsername(c.BotUsername)
+	if err != nil {
+		return errors.Wrap(err, "failed to get bot user")
+	}
+
+	c.BotUserID = user.Id
 
 	return nil
 }

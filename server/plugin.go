@@ -1,9 +1,8 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
-	"os"
-	"path/filepath"
 	"strings"
 
 	"github.com/mattermost/mattermost-server/model"
@@ -17,17 +16,10 @@ import (
 
 type Plugin struct {
 	plugin.MattermostPlugin
-
-	handler http.Handler
 }
 
 func (p *Plugin) OnActivate() error {
 	config.Mattermost = p.API
-
-	if err := p.setupStaticFileServer(); err != nil {
-		p.API.LogError(err.Error())
-		return err
-	}
 
 	if err := p.OnConfigurationChange(); err != nil {
 		return err
@@ -41,36 +33,28 @@ func (p *Plugin) OnActivate() error {
 	return nil
 }
 
-func (p *Plugin) setupStaticFileServer() error {
-	exe, err := os.Executable()
-	if err != nil {
+func (p *Plugin) OnConfigurationChange() error {
+	if config.Mattermost == nil {
+		config.Mattermost = p.API
+	}
+	var configuration config.Configuration
+
+	if err := config.Mattermost.LoadPluginConfiguration(&configuration); err != nil {
+		config.Mattermost.LogError("Error in LoadPluginConfiguration: " + err.Error())
 		return err
 	}
-	p.handler = http.FileServer(http.Dir(filepath.Dir(exe) + config.ServerExeToWebappRootPath))
-	return nil
-}
 
-func (p *Plugin) OnConfigurationChange() error {
-	if config.Mattermost != nil {
-		var configuration config.Configuration
-
-		if err := config.Mattermost.LoadPluginConfiguration(&configuration); err != nil {
-			config.Mattermost.LogError("Error in LoadPluginConfiguration: " + err.Error())
-			return err
-		}
-
-		if err := configuration.ProcessConfiguration(); err != nil {
-			config.Mattermost.LogError("Error in ProcessConfiguration: " + err.Error())
-			return err
-		}
-
-		if err := configuration.IsValid(); err != nil {
-			config.Mattermost.LogError("Error in Validating Configuration: " + err.Error())
-			return err
-		}
-
-		config.SetConfig(&configuration)
+	if err := configuration.ProcessConfiguration(); err != nil {
+		config.Mattermost.LogError("Error in ProcessConfiguration: " + err.Error())
+		return err
 	}
+
+	if err := configuration.IsValid(); err != nil {
+		config.Mattermost.LogError("Error in Validating Configuration: " + err.Error())
+		return err
+	}
+
+	config.SetConfig(&configuration)
 	return nil
 }
 
@@ -122,18 +106,24 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 	conf := config.GetConfig()
 
 	if err := conf.IsValid(); err != nil {
-		p.API.LogError("This plugin is not configured: " + err.Error())
+		config.Mattermost.LogError("This plugin is not configured: " + err.Error())
 		http.Error(w, "This plugin is not configured.", http.StatusNotImplemented)
 		return
 	}
 
-	path := r.URL.Path
-	endpoint := controller.Endpoints[path]
-
+	endpoint := controller.GetEndpoint(r)
 	if endpoint == nil {
-		p.handler.ServeHTTP(w, r)
-	} else if !endpoint.RequiresAuth || controller.Authenticated(w, r) {
-		endpoint.Execute(w, r)
+		return
+	}
+
+	if endpoint.RequiresAuth && !controller.Authenticated(w, r) {
+		config.Mattermost.LogError(fmt.Sprintf("This endpoint: %s %s requires Authentication.", endpoint.Method, endpoint.Path))
+		http.Error(w, "This endpoint requires Authentication.", http.StatusForbidden)
+		return
+	}
+
+	if err := endpoint.Execute(w, r); err != nil {
+		config.Mattermost.LogError("Processing " + r.URL.String() + ". Error: " + err.Error())
 	}
 }
 

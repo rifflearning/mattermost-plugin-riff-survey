@@ -1,6 +1,8 @@
 package util
 
 import (
+	"crypto/sha256"
+	"encoding/base64"
 	"errors"
 	"regexp"
 	"strings"
@@ -62,4 +64,10 @@ func CommandError(msg string) (*model.CommandResponse, *model.AppError) {
 		Type: model.COMMAND_RESPONSE_TYPE_EPHEMERAL,
 		Text: msg,
 	}, nil
+}
+
+func GetKeyHash(key string) string {
+	hash := sha256.New()
+	hash.Write([]byte(key))
+	return base64.StdEncoding.EncodeToString(hash.Sum(nil))
 }
