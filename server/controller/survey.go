@@ -18,12 +18,17 @@ var sendSurvey = &Endpoint{
 
 func executeSendSurvey(w http.ResponseWriter, r *http.Request) error {
 	conf := config.GetConfig()
-	userID := r.Header.Get(config.HeaderMattermostUserID)
+	userID := r.URL.Query().Get("user_id")
+	meetingID := r.URL.Query().Get("meeting_id")
+
+	// TODO: verify that user is in the meeting
+
+	config.Mattermost.LogDebug("Send survey executed.", "userID", userID, "meetingID", meetingID)
 
 	channel, appErr := config.Mattermost.GetDirectChannel(conf.BotUserID, userID)
 	if appErr != nil {
-		http.Error(w, "Error creating DM Channel.", http.StatusInternalServerError)
-		return errors.Wrap(appErr, "Error creating DM Channel.")
+		http.Error(w, "Unable to create DM Channel.", http.StatusInternalServerError)
+		return errors.Wrap(appErr, "Unable to create DM Channel.")
 	}
 
 	post := &model.Post{

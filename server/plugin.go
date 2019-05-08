@@ -64,8 +64,8 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 	}
 
 	if endpoint.RequiresAuth && !controller.Authenticated(w, r) {
-		config.Mattermost.LogError(fmt.Sprintf("This endpoint: %s %s requires Authentication.", endpoint.Method, endpoint.Path))
-		http.Error(w, "This endpoint requires Authentication.", http.StatusForbidden)
+		config.Mattermost.LogError(fmt.Sprintf("Endpoint: %s '%s' requires Authentication.", endpoint.Method, endpoint.Path))
+		http.Error(w, "This endpoint requires authentication.", http.StatusForbidden)
 		return
 	}
 

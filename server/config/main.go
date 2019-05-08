@@ -53,8 +53,9 @@ func (c *Configuration) ProcessConfiguration() error {
 }
 
 func (c *Configuration) IsValid() error {
-	// Add config validations here.
-	// Check for required fields, formats, etc.
+	if c.BotUsername == "" {
+		return errors.New("Bot username cannot be empty")
+	}
 
 	return nil
 }
