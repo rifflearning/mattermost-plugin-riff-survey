@@ -3,15 +3,11 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"strings"
 
-	"github.com/mattermost/mattermost-server/model"
 	"github.com/mattermost/mattermost-server/plugin"
 
-	"github.com/Brightscout/mattermost-plugin-survey/server/command"
 	"github.com/Brightscout/mattermost-plugin-survey/server/config"
 	"github.com/Brightscout/mattermost-plugin-survey/server/controller"
-	"github.com/Brightscout/mattermost-plugin-survey/server/util"
 )
 
 type Plugin struct {
@@ -22,11 +18,6 @@ func (p *Plugin) OnActivate() error {
 	config.Mattermost = p.API
 
 	if err := p.OnConfigurationChange(); err != nil {
-		return err
-	}
-
-	if err := p.registerCommands(); err != nil {
-		config.Mattermost.LogError(err.Error())
 		return err
 	}
 
@@ -56,50 +47,6 @@ func (p *Plugin) OnConfigurationChange() error {
 
 	config.SetConfig(&configuration)
 	return nil
-}
-
-func (p *Plugin) registerCommands() error {
-	for _, c := range command.Commands {
-		if err := config.Mattermost.RegisterCommand(c.Command); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func (p *Plugin) ExecuteCommand(c *plugin.Context, args *model.CommandArgs) (*model.CommandResponse, *model.AppError) {
-	split, argErr := util.SplitArgs(args.Command)
-	if argErr != nil {
-		return util.CommandError(argErr.Error())
-	}
-
-	cmdName := split[0]
-	var params []string
-
-	if len(split) > 1 {
-		params = split[1:]
-	}
-
-	commandConfig := command.Commands[cmdName]
-	if commandConfig == nil {
-		return nil, &model.AppError{Message: "Unknown command: [" + cmdName + "] encountered"}
-	}
-
-	context := p.prepareContext(args)
-	if response, err := commandConfig.Validate(params, context); response != nil {
-		return response, err
-	}
-
-	config.Mattermost.LogInfo("Executing command: " + cmdName + " with params: [" + strings.Join(params, ", ") + "]")
-	return commandConfig.Execute(params, context)
-}
-
-func (p *Plugin) prepareContext(args *model.CommandArgs) command.Context {
-	return command.Context{
-		CommandArgs: args,
-		Props:       make(map[string]interface{}),
-	}
 }
 
 func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Request) {
