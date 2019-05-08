@@ -2,6 +2,7 @@ package config
 
 import (
 	"github.com/mattermost/mattermost-server/plugin"
+	"github.com/pkg/errors"
 	"go.uber.org/atomic"
 )
 
@@ -14,6 +15,8 @@ const (
 	URLStaticBase = URLPluginBase + "/static"
 
 	HeaderMattermostUserID = "Mattermost-User-Id"
+
+	OverrideUsername = "Riff Bot"
 )
 
 var (
@@ -22,6 +25,10 @@ var (
 )
 
 type Configuration struct {
+	BotUsername string `json:"BotUsername"`
+
+	// Derived Attributes
+	BotUserID string
 }
 
 func GetConfig() *Configuration {
@@ -35,12 +42,20 @@ func SetConfig(c *Configuration) {
 func (c *Configuration) ProcessConfiguration() error {
 	// any post-processing on configurations goes here
 
+	user, err := Mattermost.GetUserByUsername(c.BotUsername)
+	if err != nil {
+		return errors.Wrap(err, "failed to get bot user")
+	}
+
+	c.BotUserID = user.Id
+
 	return nil
 }
 
 func (c *Configuration) IsValid() error {
-	// Add config validations here.
-	// Check for required fields, formats, etc.
+	if c.BotUsername == "" {
+		return errors.New("Bot username cannot be empty")
+	}
 
 	return nil
 }
