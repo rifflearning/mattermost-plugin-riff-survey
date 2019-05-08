@@ -15,6 +15,8 @@ const (
 	URLStaticBase = URLPluginBase + "/static"
 
 	HeaderMattermostUserID = "Mattermost-User-Id"
+
+	OverrideUsername = "Riff Bot"
 )
 
 var (

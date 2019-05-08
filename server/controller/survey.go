@@ -10,7 +10,7 @@ import (
 )
 
 var sendSurvey = &Endpoint{
-	Path:         "/survey",
+	Path:         "/send",
 	Method:       http.MethodGet,
 	Execute:      executeSendSurvey,
 	RequiresAuth: true,
@@ -32,9 +32,8 @@ func executeSendSurvey(w http.ResponseWriter, r *http.Request) error {
 		Type:      model.POST_DEFAULT,
 		Message:   "Sample survey post",
 		Props: model.StringInterface{
-			"from_webhook": "true",
-			// "override_username": config.OverrideUsername,
-			// "override_icon_url": config.OverrideIconURL,
+			"from_webhook":      "true",
+			"override_username": config.OverrideUsername,
 		},
 	}
 
