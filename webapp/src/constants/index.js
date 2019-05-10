@@ -1,10 +1,10 @@
 import {PLUGIN_NAME} from './manifest';
-import SVGS from './svgs';
+import {ACTION_TYPES} from './action_types';
 
 //
 // Export the constants
 //
 export default {
+    ACTION_TYPES,
     PLUGIN_NAME,
-    SVGS,
 };
