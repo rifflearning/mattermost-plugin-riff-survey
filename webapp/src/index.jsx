@@ -1,5 +1,7 @@
 import PostTypeSurvey from './components/post_type_survey';
+import SurveyModal from './components/survey_modal';
 
+import reducer from './reducers';
 import Constants from './constants';
 
 //
@@ -8,10 +10,12 @@ import Constants from './constants';
 //
 class PluginClass {
     initialize(registry) {
+        registry.registerRootComponent(SurveyModal);
         registry.registerPostTypeComponent(
             'custom_survey',
             PostTypeSurvey,
         );
+        registry.registerReducer(reducer);
     }
 }
 

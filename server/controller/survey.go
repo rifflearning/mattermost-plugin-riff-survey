@@ -34,7 +34,7 @@ func executeSendSurvey(w http.ResponseWriter, r *http.Request) error {
 	post := &model.Post{
 		UserId:    conf.BotUserID,
 		ChannelId: channel.Id,
-		Type:      model.POST_DEFAULT,
+		Type:      "custom_survey",
 		Message:   "Sample survey post",
 		Props: model.StringInterface{
 			"from_webhook":      "true",

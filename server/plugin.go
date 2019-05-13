@@ -70,7 +70,7 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 	}
 
 	if err := endpoint.Execute(w, r); err != nil {
-		config.Mattermost.LogError("Processing " + r.URL.String() + ". Error: " + err.Error())
+		config.Mattermost.LogError(fmt.Sprintf("Processing: %s '%s'.", r.Method, r.URL.String()), "Error", err.Error())
 	}
 }
 
