@@ -25,13 +25,8 @@ export default class QuestionTypeOpen extends React.PureComponent {
     render() {
         const {index, text} = this.props;
 
-        let questionStyles = style.question;
-        if (index % 2 === 1) {
-            questionStyles = {...questionStyles, ...style.primaryQuestion};
-        }
-
         return (
-            <fieldset style={questionStyles}>
+            <fieldset style={style.question}>
                 <span style={style.questionText}>{`${index}. ${text}`}</span>
                 <textarea
                     maxLength={Constants.OPEN_QUESTION_MAX_LENGTH}
@@ -49,14 +44,10 @@ const style = {
     question: {
         margin: '1em 0',
     },
-    primaryQuestion: {
-        backgroundColor: '#7e7e7e',
-    },
     questionText: {
         display: 'block',
         width: '100%',
         padding: '0',
-        fontSize: '1.2em',
         color: '#333',
     },
     remaining: {

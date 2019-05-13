@@ -1,9 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import {changeOpacity} from 'mattermost-redux/utils/theme_utils';
+
 export default class QuestionTypeLikertScale extends React.PureComponent {
     static propTypes = {
         text: PropTypes.string.isRequired,
+        theme: PropTypes.object.isRequired,
         // eslint-disable-next-line react/no-unused-prop-types
         points: PropTypes.number,
         index: PropTypes.number,
@@ -14,11 +17,11 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
     static defaultProps = {
         points: 5,
         responses: [
-            {value: 1, text: 'Strongly Agree'},
-            {value: 2, text: 'Agree'},
-            {value: 3, text: 'Neutral'},
-            {value: 4, text: 'Disagree'},
-            {value: 5, text: 'Strongly Disagree'},
+            {value: '1', text: 'Strongly Agree'},
+            {value: '2', text: 'Agree'},
+            {value: '3', text: 'Neutral'},
+            {value: '4', text: 'Disagree'},
+            {value: '5', text: 'Strongly Disagree'},
         ],
         handleChange: (val) => {
             console.log(val); // eslint-disable-line no-console
@@ -28,27 +31,49 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
     constructor(props) {
         super(props);
         this.state = {
+            selectedValue: '',
+            hoveredValue: '',
         };
     }
 
     handleChange = (evt) => {
-        this.props.handleChange(evt.target.value);
+        const selectedValue = evt.target.value;
+        this.props.handleChange(selectedValue);
+        this.setState({
+            selectedValue,
+        });
     };
+
+    handleMouseEnter = (e) => {
+        this.setState({
+            hoveredValue: e.target.value,
+        });
+    }
+
+    handleMouseLeave = () => {
+        this.setState({
+            hoveredValue: '',
+        });
+    }
 
     render() {
         const {index, responses, text} = this.props;
-
-        let questionStyles = style.question;
-        if (index % 2 === 1) {
-            questionStyles = {...questionStyles, ...style.primaryQuestion};
-        }
+        const {hoveredValue, selectedValue} = this.state;
 
         const radios = responses.map((response, idx) => {
+            const optionStyle = {...style.option};
+            if (selectedValue === response.value) {
+                optionStyle.backgroundColor = this.props.theme.sidebarTextActiveBorder;
+                optionStyle.color = this.props.theme.sidebarTextActiveColor;
+            } else if (hoveredValue === response.value) {
+                optionStyle.backgroundColor = changeOpacity(this.props.theme.sidebarTextHoverBg, 0.1);
+            }
+
             return (
                 <div
                     key={index + response.value}
                     className='form-check'
-                    style={style.option}
+                    style={optionStyle}
                 >
                     <input
                         type='radio'
@@ -56,6 +81,8 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
                         value={response.value}
                         name={text}
                         id={text + idx}
+                        onMouseEnter={this.handleMouseEnter}
+                        onMouseLeave={this.handleMouseLeave}
                         onClick={this.handleChange}
                     />
                     <label
@@ -69,7 +96,7 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
         });
 
         return (
-            <div style={questionStyles}>
+            <div style={style.question}>
                 <span style={style.questionText}>{`${index}. ${text}`}</span>
                 <div style={style.options}>{radios}</div>
             </div>
@@ -81,24 +108,23 @@ const style = {
     question: {
         margin: '1em 0',
     },
-    primaryQuestion: {
-        backgroundColor: '#7e7e7e',
-    },
     questionText: {
         display: 'block',
         width: '100%',
         padding: '0',
-        fontSize: '1.2em',
         color: '#333',
     },
     options: {
         display: 'flex',
         flexDirection: 'row',
+        justifyContent: 'space-between',
         paddingTop: '1em',
+        cursor: 'pointer',
     },
     option: {
         display: 'flex',
         flexDirection: 'column',
+        flex: '1 1 auto',
         alignItems: 'center',
         margin: '0 10px',
     },

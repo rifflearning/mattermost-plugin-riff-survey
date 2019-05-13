@@ -31,10 +31,9 @@ const questionsList = [
 
 export default class SurveyModal extends React.PureComponent {
     static propTypes = {
+        theme: PropTypes.object.isRequired,
         visible: PropTypes.bool,
         close: PropTypes.func,
-        // eslint-disable-next-line lines-around-comment
-        // theme: PropTypes.object.isRequired,
     }
 
     constructor(props) {
@@ -53,6 +52,8 @@ export default class SurveyModal extends React.PureComponent {
     };
 
     renderQuestions = () => {
+        const {theme} = this.props;
+
         return questionsList.map((question, idx) => {
             switch (question.type) {
             case 'open':
@@ -61,6 +62,7 @@ export default class SurveyModal extends React.PureComponent {
                         index={idx + 1}
                         key={question.text}
                         text={question.text}
+                        theme={theme}
                     />
                 );
 
@@ -70,6 +72,7 @@ export default class SurveyModal extends React.PureComponent {
                         index={idx + 1}
                         key={question.text}
                         text={question.text}
+                        theme={theme}
                     />
                 );
 
