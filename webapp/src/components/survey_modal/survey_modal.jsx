@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {Button, Modal} from 'react-bootstrap';
+import {Button, ButtonGroup, Modal} from 'react-bootstrap';
 
 import QuestionTypeOpen from '../question_type_open';
 import QuestionTypeLikertScale from '../question_type_likert_scale';
@@ -99,13 +99,11 @@ export default class SurveyModal extends React.PureComponent {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>{'Please tell us about your Riff meeting experience. We will ask you to take this short survey after each meeting, to see how your experience changes over time.'}</p>
+                    <p style={{marginBottom: '20px'}}>
+                        {'Please tell us about your Riff meeting experience. We will ask you to take this short survey after each meeting, to see how your experience changes over time.'}
+                    </p>
                     {questions}
-                    <div
-                        role='group'
-                        className='btn-group'
-                        style={{float: 'right'}}
-                    >
+                    <ButtonGroup>
                         <Button
                             type='button'
                             bsStyle='secondary'
@@ -120,7 +118,7 @@ export default class SurveyModal extends React.PureComponent {
                         >
                             {'Submit'}
                         </Button>
-                    </div>
+                    </ButtonGroup>
                 </Modal.Body>
             </Modal>
         );

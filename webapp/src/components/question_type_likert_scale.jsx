@@ -46,7 +46,7 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
 
     handleMouseEnter = (e) => {
         this.setState({
-            hoveredValue: e.target.value,
+            hoveredValue: e.target.dataset.value,
         });
     }
 
@@ -70,34 +70,37 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
             }
 
             return (
-                <div
+                <label
                     key={index + response.value}
                     className='form-check'
                     style={optionStyle}
+                    htmlFor={`${index}${idx}`}
+                    data-value={response.value}
+                    onMouseOver={this.handleMouseEnter}
+                    onMouseOut={this.handleMouseLeave}
                 >
                     <input
                         type='radio'
                         className='form-check-input'
                         value={response.value}
-                        name={text}
-                        id={text + idx}
-                        onMouseEnter={this.handleMouseEnter}
-                        onMouseLeave={this.handleMouseLeave}
+                        name={index}
+                        id={`${index}${idx}`}
+                        style={style.optionRadio}
                         onClick={this.handleChange}
                     />
-                    <label
+                    <span
                         className='form-check-label'
-                        style={style.optionText}
+                        style={style.optionLabel}
                     >
                         {response.text}
-                    </label>
-                </div>
+                    </span>
+                </label>
             );
         });
 
         return (
-            <div style={style.question}>
-                <span style={style.questionText}>{`${index}. ${text}`}</span>
+            <div className='form-group'>
+                <p>{`${index}. ${text}`}</p>
                 <div style={style.options}>{radios}</div>
             </div>
         );
@@ -105,31 +108,34 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
 }
 
 const style = {
-    question: {
-        margin: '1em 0',
-    },
-    questionText: {
-        display: 'block',
-        width: '100%',
-        padding: '0',
-        color: '#333',
-    },
     options: {
+        marginTop: '20px',
+        marginBottom: '32px',
+        width: '100%',
+        height: '64px',
         display: 'flex',
         flexDirection: 'row',
-        justifyContent: 'space-between',
-        paddingTop: '1em',
-        cursor: 'pointer',
+        borderWidth: '1px',
+        borderStyle: 'solid',
+        borderImage: 'initial',
+        borderRadius: '3px',
+        overflow: 'hidden',
     },
     option: {
+        height: '100%',
         display: 'flex',
-        flexDirection: 'column',
-        flex: '1 1 auto',
         alignItems: 'center',
-        margin: '0 10px',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        userSelect: 'none',
+        flex: '1 1 0%',
     },
-    optionText: {
+    optionRadio: {
+        display: 'none',
+    },
+    optionLabel: {
         display: 'inline-block',
-        paddingTop: '0.4em',
+        cursor: 'pointer',
+        textAlign: 'center',
     },
 };

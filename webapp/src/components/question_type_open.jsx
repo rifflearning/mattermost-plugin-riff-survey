@@ -26,31 +26,27 @@ export default class QuestionTypeOpen extends React.PureComponent {
         const {index, text} = this.props;
 
         return (
-            <fieldset style={style.question}>
-                <span style={style.questionText}>{`${index}. ${text}`}</span>
+            <div className='form-group clearfix'>
+                <p>{`${index}. ${text}`}</p>
                 <textarea
                     maxLength={Constants.OPEN_QUESTION_MAX_LENGTH}
                     onChange={this.handleChange}
                     className='form-control'
                     rows={5}
+                    style={style.textarea}
+                    id={index}
                 />
                 <span style={style.remaining}>{`${this.state.remaining} character(s) left`}</span>
-            </fieldset>
+            </div>
         );
     }
 }
 
 const style = {
-    question: {
-        margin: '1em 0',
-    },
-    questionText: {
-        display: 'block',
-        width: '100%',
-        padding: '0',
-        color: '#333',
-    },
     remaining: {
         float: 'right',
+    },
+    textarea: {
+        resize: 'vertical',
     },
 };
