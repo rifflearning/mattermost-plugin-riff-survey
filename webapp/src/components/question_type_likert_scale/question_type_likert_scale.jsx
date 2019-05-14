@@ -1,7 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
+import {FormGroup, ControlLabel, Radio} from 'react-bootstrap';
 import {changeOpacity} from 'mattermost-redux/utils/theme_utils';
+
+import './styles.css';
 
 export default class QuestionTypeLikertScale extends React.PureComponent {
     static propTypes = {
@@ -61,7 +64,7 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
         const {hoveredValue, selectedValue} = this.state;
 
         const radios = responses.map((response, idx) => {
-            const optionStyle = {...style.option};
+            const optionStyle = {};
             if (selectedValue === response.value) {
                 optionStyle.backgroundColor = this.props.theme.sidebarTextActiveBorder;
                 optionStyle.color = this.props.theme.sidebarTextActiveColor;
@@ -70,72 +73,32 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
             }
 
             return (
-                <label
+                <ControlLabel
                     key={index + response.value}
-                    className='form-check'
+                    className='likert-option'
                     style={optionStyle}
                     htmlFor={`${index}${idx}`}
                     data-value={response.value}
                     onMouseOver={this.handleMouseEnter}
                     onMouseOut={this.handleMouseLeave}
                 >
-                    <input
-                        type='radio'
-                        className='form-check-input'
+                    <Radio
+                        className='display-none'
                         value={response.value}
                         name={index}
                         id={`${index}${idx}`}
-                        style={style.optionRadio}
                         onClick={this.handleChange}
                     />
-                    <span
-                        className='form-check-label'
-                        style={style.optionLabel}
-                    >
-                        {response.text}
-                    </span>
-                </label>
+                    <span className='likert-option-label'>{response.text}</span>
+                </ControlLabel>
             );
         });
 
         return (
-            <div className='form-group'>
+            <FormGroup>
                 <p>{`${index}. ${text}`}</p>
-                <div style={style.options}>{radios}</div>
-            </div>
+                <div className='likert-options'>{radios}</div>
+            </FormGroup>
         );
     }
 }
-
-const style = {
-    options: {
-        marginTop: '20px',
-        marginBottom: '32px',
-        width: '100%',
-        height: '64px',
-        display: 'flex',
-        flexDirection: 'row',
-        borderWidth: '1px',
-        borderStyle: 'solid',
-        borderImage: 'initial',
-        borderRadius: '3px',
-        overflow: 'hidden',
-    },
-    option: {
-        height: '100%',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        userSelect: 'none',
-        flex: '1 1 0%',
-    },
-    optionRadio: {
-        display: 'none',
-    },
-    optionLabel: {
-        display: 'inline-block',
-        cursor: 'pointer',
-        textAlign: 'center',
-    },
-};

@@ -4,6 +4,9 @@ import SurveyModal from './components/survey_modal';
 import reducer from './reducers';
 import Constants from './constants';
 
+// Global Styles
+import './styles.css';
+
 //
 // Define the plugin class that will register
 // our plugin components.

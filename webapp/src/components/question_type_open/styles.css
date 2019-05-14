@@ -1,0 +1,9 @@
+.open-question-textarea {
+  resize: vertical;
+  overflow-wrap: break-word;
+  overflow: hidden;
+  outline: none;
+  height: 143px;
+  margin-top: 20px;
+  margin-bottom: 0;
+}

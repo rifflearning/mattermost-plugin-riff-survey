@@ -1,7 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import {FormGroup, FormControl, HelpBlock} from 'react-bootstrap';
 
-import Constants from '../constants';
+import Constants from '../../constants';
+import './styles.css';
 
 export default class QuestionTypeOpen extends React.PureComponent {
     static propTypes = {
@@ -26,27 +28,18 @@ export default class QuestionTypeOpen extends React.PureComponent {
         const {index, text} = this.props;
 
         return (
-            <div className='form-group clearfix'>
+            <FormGroup className='clearfix'>
                 <p>{`${index}. ${text}`}</p>
-                <textarea
+                <FormControl
+                    componentClass='textarea'
                     maxLength={Constants.OPEN_QUESTION_MAX_LENGTH}
                     onChange={this.handleChange}
-                    className='form-control'
-                    rows={5}
-                    style={style.textarea}
+                    rows={Constants.OPEN_QUESTION_INITIAL_ROWS}
+                    className='open-question-textarea'
                     id={index}
                 />
-                <span style={style.remaining}>{`${this.state.remaining} character(s) left`}</span>
-            </div>
+                <HelpBlock className='float-right'>{`${this.state.remaining} character(s) left`}</HelpBlock>
+            </FormGroup>
         );
     }
 }
-
-const style = {
-    remaining: {
-        float: 'right',
-    },
-    textarea: {
-        resize: 'vertical',
-    },
-};
