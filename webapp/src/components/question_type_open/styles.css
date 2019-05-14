@@ -1,9 +1,16 @@
 .open-question-textarea {
   resize: vertical;
   overflow-wrap: break-word;
-  overflow: hidden;
   outline: none;
-  height: 143px;
   margin-top: 20px;
-  margin-bottom: 0;
+}
+
+.open-question-textarea:hover {
+  border: 1px solid;
+}
+
+.open-question-textarea:focus {
+  box-shadow: 0 0 0 1px #1264a3, 0 0 0 5px rgba(29, 155, 209, 0.3);
+  border-radius: 4px;
+  border-color: transparent;
 }

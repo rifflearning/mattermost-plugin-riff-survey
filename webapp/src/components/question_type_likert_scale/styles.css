@@ -17,11 +17,11 @@
   justify-content: center;
   cursor: pointer;
   user-select: none;
-  flex: 1 1 0%;
+  flex: 1 1 0;
 }
 
 .likert-option:not(:last-child) {
-  border-right: 1px solid grey;
+  border-right: 1px solid;
 }
 
 .likert-option-label {
