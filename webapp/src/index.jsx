@@ -1,8 +1,11 @@
-import React from 'react';
+import PostTypeSurvey from './components/post_type_survey';
+import SurveyModal from './components/survey_modal';
 
-import {ChannelHeaderButtonIcon} from 'components/icons';
-
+import reducer from './reducers';
 import Constants from './constants';
+
+// Global Styles
+import './styles.css';
 
 //
 // Define the plugin class that will register
@@ -10,20 +13,12 @@ import Constants from './constants';
 //
 class PluginClass {
     initialize(registry) {
-        registry.registerChannelHeaderButtonAction(
-
-            // icon - JSX element to use as the button's icon
-            <ChannelHeaderButtonIcon/>,
-
-            // action - a function called when the button is clicked, passed the channel and channel member as arguments
-            // null,
-            () => {
-                console.log('Hello World!'); // eslint-disable-line no-console
-            },
-
-            // dropdown_text - string or JSX element shown for the dropdown button description
-            'Hello World',
+        registry.registerRootComponent(SurveyModal);
+        registry.registerPostTypeComponent(
+            'custom_survey',
+            PostTypeSurvey,
         );
+        registry.registerReducer(reducer);
     }
 }
 

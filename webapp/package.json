@@ -5,6 +5,8 @@
   "main": "src/index.js",
   "scripts": {
     "build": "webpack --mode=production",
+    "lint-style": "stylelint src/**/*.css",
+    "fix-style": "stylelint src/**/*.css --fix",
     "lint": "eslint --ignore-pattern node_modules --ignore-pattern dist --ext .js --ext .jsx . --quiet",
     "fix": "eslint --ignore-pattern node_modules --ignore-pattern dist --ext .js --ext .jsx . --quiet --fix"
   },
@@ -27,6 +29,8 @@
     "eslint-plugin-import": "2.14.0",
     "eslint-plugin-react": "7.11.1",
     "style-loader": "^0.19.0",
+    "stylelint": "^10.0.1",
+    "stylelint-config-standard": "^18.3.0",
     "url-loader": "^1.1.2",
     "webpack": "^4.30.0",
     "webpack-cli": "^3.0.8"
