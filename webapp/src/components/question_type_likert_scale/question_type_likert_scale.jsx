@@ -59,14 +59,14 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
     render() {
         const {index, responses, text, theme} = this.props;
         const {hoveredValue, selectedValue} = this.state;
+        const style = getStyle(theme);
 
         const radios = responses.map((response, idx) => {
-            const optionStyle = {};
+            let optionStyle;
             if (selectedValue === response.value) {
-                optionStyle.backgroundColor = theme.sidebarTextActiveBorder;
-                optionStyle.color = theme.sidebarTextActiveColor;
+                optionStyle = style.selected;
             } else if (hoveredValue === response.value) {
-                optionStyle.backgroundColor = changeOpacity(theme.sidebarTextHoverBg, 0.1);
+                optionStyle = style.hovered;
             }
 
             return (
@@ -99,3 +99,13 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
         );
     }
 }
+
+const getStyle = makeStyleFromTheme((theme) => ({
+    selected: {
+        backgroundColor: theme.sidebarTextActiveBorder,
+        color: theme.sidebarTextActiveColor,
+    },
+    hovered: {
+        backgroundColor: changeOpacity(theme.sidebarTextHoverBg, 0.1),
+    },
+}));

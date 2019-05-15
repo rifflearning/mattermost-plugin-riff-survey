@@ -8,9 +8,8 @@ import './styles.css';
 export default class PostTypeSurvey extends React.PureComponent {
     static propTypes = {
         post: PropTypes.object.isRequired,
+        currentUser: PropTypes.object.isRequired,
         open: PropTypes.func,
-        // eslint-disable-next-line lines-around-comment
-        // theme: PropTypes.object.isRequired,
     }
 
     constructor(props) {
@@ -28,7 +27,7 @@ export default class PostTypeSurvey extends React.PureComponent {
     };
 
     renderSubmitted = () => {
-        const message1 = 'Thanks for your feedback @abc! Have you checked out ';
+        const message1 = `Thanks for your feedback ${this.props.currentUser.username}! Have you checked out `;
         const dashboardLink = (
             <p><a onClick={this.goToDashboard}>{'your Riff Stats'}</a></p>
         );
@@ -42,18 +41,14 @@ export default class PostTypeSurvey extends React.PureComponent {
         );
     };
 
-    render() {
-        const {post} = this.props;
-        const postProps = post.props;
-        if (postProps.submitted) {
-            return this.renderSubmitted();
-        }
-
-        const message1 = 'Hi @abc - Please ';
+    renderNotSubmitted = () => {
+        const message1 = `Hi ${this.props.currentUser.username} - Please `;
         const modalLink = (
             <p><a onClick={this.openModal}>{'tell us about the meeting'}</a></p>
         );
-        const message2 = ' you just had with @riffbot and @someone? It only takes 30 seconds, and helps understand your experience over time.';
+
+        // TODO: Get other meeting participants
+        const message2 = ' you just had? It only takes 30 seconds, and helps understand your experience over time.';
 
         return (
             <div className='same-line'>
@@ -62,5 +57,15 @@ export default class PostTypeSurvey extends React.PureComponent {
                 {messageHtmlToComponent(formatText(message2, {atMentions: true}))}
             </div>
         );
+    };
+
+    render() {
+        const {post} = this.props;
+        const postProps = post.props;
+        if (postProps.submitted) {
+            return this.renderSubmitted();
+        }
+
+        return this.renderNotSubmitted();
     }
 }
