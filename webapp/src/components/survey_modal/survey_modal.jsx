@@ -6,6 +6,8 @@ import {Button, ButtonGroup, Modal} from 'react-bootstrap';
 import QuestionTypeOpen from '../question_type_open';
 import QuestionTypeLikertScale from '../question_type_likert_scale';
 
+import './styles.css';
+
 const questionsList = [
     {
         type: '5-point-likert-scale',
@@ -99,11 +101,11 @@ export default class SurveyModal extends React.PureComponent {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p style={{marginBottom: '20px'}}>
+                    <p className='survey-banner-text'>
                         {'Please tell us about your Riff meeting experience. We will ask you to take this short survey after each meeting, to see how your experience changes over time.'}
                     </p>
                     {questions}
-                    <ButtonGroup>
+                    <ButtonGroup className='float-right'>
                         <Button
                             type='button'
                             bsStyle='secondary'
@@ -114,6 +116,7 @@ export default class SurveyModal extends React.PureComponent {
                         <Button
                             type='submit'
                             bsStyle='primary'
+                            className='submit-survey-btn'
                             onClick={this.handleSubmit}
                         >
                             {'Submit'}
