@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import {FormGroup, ControlLabel, Radio} from 'react-bootstrap';
-import {changeOpacity} from 'mattermost-redux/utils/theme_utils';
+import {changeOpacity, makeStyleFromTheme} from 'mattermost-redux/utils/theme_utils';
 
 import './styles.css';
 
@@ -10,15 +10,12 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
     static propTypes = {
         text: PropTypes.string.isRequired,
         theme: PropTypes.object.isRequired,
-        // eslint-disable-next-line react/no-unused-prop-types
-        points: PropTypes.number,
         index: PropTypes.number,
         responses: PropTypes.array,
         handleChange: PropTypes.func,
     }
 
     static defaultProps = {
-        points: 5,
         responses: [
             {value: '1', text: 'Strongly Agree'},
             {value: '2', text: 'Agree'},
@@ -60,16 +57,16 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
     }
 
     render() {
-        const {index, responses, text} = this.props;
+        const {index, responses, text, theme} = this.props;
         const {hoveredValue, selectedValue} = this.state;
 
         const radios = responses.map((response, idx) => {
             const optionStyle = {};
             if (selectedValue === response.value) {
-                optionStyle.backgroundColor = this.props.theme.sidebarTextActiveBorder;
-                optionStyle.color = this.props.theme.sidebarTextActiveColor;
+                optionStyle.backgroundColor = theme.sidebarTextActiveBorder;
+                optionStyle.color = theme.sidebarTextActiveColor;
             } else if (hoveredValue === response.value) {
-                optionStyle.backgroundColor = changeOpacity(this.props.theme.sidebarTextHoverBg, 0.1);
+                optionStyle.backgroundColor = changeOpacity(theme.sidebarTextHoverBg, 0.1);
             }
 
             return (
