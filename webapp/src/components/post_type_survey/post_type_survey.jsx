@@ -27,7 +27,7 @@ export default class PostTypeSurvey extends React.PureComponent {
     };
 
     renderSubmitted = () => {
-        const message1 = `Thanks for your feedback ${this.props.currentUser.username}! Have you checked out `;
+        const message1 = `Thanks for your feedback @${this.props.currentUser.username}! Have you checked out`;
         const dashboardLink = (
             <p><a onClick={this.goToDashboard}>{'your Riff Stats'}</a></p>
         );
@@ -42,7 +42,7 @@ export default class PostTypeSurvey extends React.PureComponent {
     };
 
     renderNotSubmitted = () => {
-        const message1 = `Hi ${this.props.currentUser.username} - Please `;
+        const message1 = `Hi @${this.props.currentUser.username} - Please`;
         const modalLink = (
             <p><a onClick={this.openModal}>{'tell us about the meeting'}</a></p>
         );
