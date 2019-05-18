@@ -15,6 +15,7 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
         handleChange: PropTypes.func,
     }
 
+    // TODO: Pass these as props and make these required
     static defaultProps = {
         responses: [
             {value: '1', text: 'Strongly Agree'},

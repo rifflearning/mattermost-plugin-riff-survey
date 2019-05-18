@@ -8,6 +8,7 @@ import QuestionTypeLikertScale from '../question_type_likert_scale';
 
 import './styles.css';
 
+// TODO: Use the values from DB instead
 const questionsList = [
     {
         type: '5-point-likert-scale',
@@ -83,6 +84,7 @@ export default class SurveyModal extends React.PureComponent {
             }
         });
     };
+
     render() {
         const questions = this.renderQuestions();
         return (

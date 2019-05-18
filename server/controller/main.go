@@ -18,6 +18,9 @@ type Endpoint struct {
 // Usage: getEndpointKey(GetMetadata): GetMetadata
 var Endpoints = map[string]*Endpoint{
 	getEndpointKey(sendSurvey): sendSurvey,
+	// getEndpointKey(getSurveyQuestions):   getSurveyQuestions,
+	// getEndpointKey(submitSurveyResponse): submitSurveyResponse,
+	// getEndpointKey(getDashboardLink):     getDashboardLink,
 }
 
 func getEndpointKey(endpoint *Endpoint) string {
