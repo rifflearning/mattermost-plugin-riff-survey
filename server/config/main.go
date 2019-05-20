@@ -1,9 +1,14 @@
 package config
 
 import (
+	"encoding/json"
+	"fmt"
+
 	"github.com/mattermost/mattermost-server/plugin"
 	"github.com/pkg/errors"
 	"go.uber.org/atomic"
+
+	"github.com/Brightscout/mattermost-plugin-survey/server/model"
 )
 
 const (
@@ -26,9 +31,11 @@ var (
 
 type Configuration struct {
 	BotUsername string `json:"BotUsername"`
+	Survey string `json:"Survey"`
 
 	// Derived Attributes
 	BotUserID string
+	ParsedSurvey model.Survey
 }
 
 func GetConfig() *Configuration {
@@ -46,8 +53,16 @@ func (c *Configuration) ProcessConfiguration() error {
 	if err != nil {
 		return errors.Wrap(err, "failed to get bot user")
 	}
-
 	c.BotUserID = user.Id
+
+	var parsedSurvey model.Survey
+	if err := json.Unmarshal([]byte(c.Survey), &parsedSurvey); err != nil {
+		Mattermost.LogError("Unable to parse json for the survey. Error: " + err.Error() + ". Please make sure it is a valid JSON of the provided format.")
+		return err
+	}
+	c.ParsedSurvey = parsedSurvey
+
+	fmt.Println(parsedSurvey)
 
 	return nil
 }
