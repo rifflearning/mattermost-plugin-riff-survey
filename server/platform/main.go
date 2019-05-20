@@ -5,14 +5,6 @@ import (
 	"github.com/Brightscout/mattermost-plugin-survey/server/model"
 )
 
-type SurveyApp interface {
-	GetDashboardLink()
-	GetMeetingParticipants()
-	SaveSurveyResponse()
-	CreateSurveyPost()
-	SelectSurvey()
-}
-
 // GetSurvey returns the survey with a given id and version.
 // Returns the survey if found and nil if not.
 func GetSurvey(id string, version int) *model.Survey {
@@ -24,8 +16,9 @@ func GetSurvey(id string, version int) *model.Survey {
 	return survey
 }
 
-// SaveSurvey creates a new survey if this is the first survey of the system
-// or updates an existing survey if it exists and some field has changed
+// SaveSurvey creates a new survey in the DB.
+// If this is the first survey for a given ID, the version is set to 1.
+// Otherwise, the version for an existing survey is incremented.
 func SaveSurvey(survey *model.Survey) error {
 	currentSurveyVersion := 0
 
