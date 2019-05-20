@@ -1,48 +1,69 @@
 package kvstore
 
-import "github.com/Brightscout/mattermost-plugin-survey/server/model"
+import (
+	"strconv"
 
-// import (
-// 	"errors"
+	"github.com/Brightscout/mattermost-plugin-survey/server/config"
+	"github.com/Brightscout/mattermost-plugin-survey/server/model"
+	"github.com/Brightscout/mattermost-plugin-survey/server/store"
+)
 
-// 	"github.com/Brightscout/mattermost-plugin-survey/server/store"
-// )
-
-// SurveyStore allows to access surveys in the KV Store.
-type SurveyStore struct {
+// Store is the implementation for the interface to interact with the KV Store.
+type Store struct {
 }
 
-func (s *SurveyStore) GetLatestSurveyVersion(id string) (*model.LatestSurveyVersion, error) {
+// NewStore returns a fresh store.
+func NewStore() store.Store {
+	return &Store{}
+}
+
+func (s *Store) GetLatestSurveyInfo(id string) (*model.LatestSurveyInfo, error) {
+	key := LatestSurveyKey(id)
+	b, err := config.Mattermost.KVGet(key)
+	if err != nil {
+		return nil, err
+	}
+	info := model.DecodeLatestSurveyInfoFromByte(b)
+	return info, nil
+}
+
+func (s *Store) SaveLatestSurveyInfo(info *model.LatestSurveyInfo) error {
+	key := LatestSurveyKey(info.ID)
+	if err := config.Mattermost.KVSet(key, info.EncodeToByte()); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Store) GetSurvey(id string, version int) (*model.Survey, error) {
+	key := SurveyKey(id, strconv.Itoa(version))
+	b, err := config.Mattermost.KVGet(key)
+	if err != nil {
+		return nil, err
+	}
+	survey := model.DecodeSurveyFromByte(b)
+	return survey, nil
+}
+
+func (s *Store) SaveSurvey(survey *model.Survey) error {
+	key := SurveyKey(survey.ID, strconv.Itoa(survey.Version))
+	if err := config.Mattermost.KVSet(key, survey.EncodeToByte()); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *Store) GetMeetingMetadata(meetingID string) (*model.MeetingMetadata, error) {
 	// TODO: Implement this method
 	return nil, nil
 }
 
-func (s *SurveyStore) SaveLatestSurveyVersion(id, version string) error {
+func (s *Store) SaveMeetingMetadata(data *model.MeetingMetadata) error {
 	// TODO: Implement this method
 	return nil
 }
 
-func (s *SurveyStore) GetSurvey(id, version string) (*model.Survey, error) {
-	// TODO: Implement this method
-	return nil, nil
-}
-
-func (s *SurveyStore) SaveSurvey(survey *model.Survey) error {
-	// TODO: Implement this method
-	return nil
-}
-
-func (s *SurveyStore) GetMeetingMetadata(meetingID string) (*model.MeetingMetadata, error) {
-	// TODO: Implement this method
-	return nil, nil
-}
-
-func (s *SurveyStore) SaveMeetingMetadata(data *model.MeetingMetadata) error {
-	// TODO: Implement this method
-	return nil
-}
-
-func (s *SurveyStore) SaveSurveyResponse(response *model.SurveyResponse) error {
+func (s *Store) SaveSurveyResponse(response *model.SurveyResponse) error {
 	// TODO: Implement this method
 	return nil
 }

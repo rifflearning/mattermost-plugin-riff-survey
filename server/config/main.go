@@ -2,13 +2,13 @@ package config
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/mattermost/mattermost-server/plugin"
 	"github.com/pkg/errors"
 	"go.uber.org/atomic"
 
 	"github.com/Brightscout/mattermost-plugin-survey/server/model"
+	"github.com/Brightscout/mattermost-plugin-survey/server/store"
 )
 
 const (
@@ -22,20 +22,23 @@ const (
 	HeaderMattermostUserID = "Mattermost-User-Id"
 
 	OverrideUsername = "Riff Bot"
+
+	HardcodedSurveyID = "f298903f8a80054ba09e342d0d9780635d3675a2"
 )
 
 var (
 	config     atomic.Value
 	Mattermost plugin.API
+	Store      store.Store
 )
 
 type Configuration struct {
 	BotUsername string `json:"BotUsername"`
-	Survey string `json:"Survey"`
+	Survey      string `json:"Survey"`
 
 	// Derived Attributes
-	BotUserID string
-	ParsedSurvey model.Survey
+	BotUserID    string
+	ParsedSurvey *model.Survey
 }
 
 func GetConfig() *Configuration {
@@ -55,14 +58,11 @@ func (c *Configuration) ProcessConfiguration() error {
 	}
 	c.BotUserID = user.Id
 
-	var parsedSurvey model.Survey
+	var parsedSurvey *model.Survey
 	if err := json.Unmarshal([]byte(c.Survey), &parsedSurvey); err != nil {
-		Mattermost.LogError("Unable to parse json for the survey. Error: " + err.Error() + ". Please make sure it is a valid JSON of the provided format.")
-		return err
+		return errors.Wrap(err, "Unable to parse json for the Survey. Please make sure it is a valid JSON of the provided format. Error")
 	}
 	c.ParsedSurvey = parsedSurvey
-
-	fmt.Println(parsedSurvey)
 
 	return nil
 }

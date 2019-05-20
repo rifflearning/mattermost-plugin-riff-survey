@@ -8,6 +8,8 @@ import (
 
 	"github.com/Brightscout/mattermost-plugin-survey/server/config"
 	"github.com/Brightscout/mattermost-plugin-survey/server/controller"
+	"github.com/Brightscout/mattermost-plugin-survey/server/platform"
+	"github.com/Brightscout/mattermost-plugin-survey/server/store/kvstore"
 )
 
 type Plugin struct {
@@ -16,6 +18,7 @@ type Plugin struct {
 
 func (p *Plugin) OnActivate() error {
 	config.Mattermost = p.API
+	config.Store = kvstore.NewStore()
 
 	if err := p.OnConfigurationChange(); err != nil {
 		return err
@@ -25,9 +28,11 @@ func (p *Plugin) OnActivate() error {
 }
 
 func (p *Plugin) OnConfigurationChange() error {
+	// If the plugin is not activated
 	if config.Mattermost == nil {
-		config.Mattermost = p.API
+		return nil
 	}
+
 	var configuration config.Configuration
 
 	if err := config.Mattermost.LoadPluginConfiguration(&configuration); err != nil {
@@ -46,6 +51,24 @@ func (p *Plugin) OnConfigurationChange() error {
 	}
 
 	config.SetConfig(&configuration)
+
+	if err := initSurvey(); err != nil {
+		config.Mattermost.LogError("Error in Initialising Survey: " + err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func initSurvey() error {
+	survey := config.GetConfig().ParsedSurvey
+
+	// TODO: for v2, determine ID for survey
+	survey.ID = config.HardcodedSurveyID
+
+	if err := platform.SaveSurvey(survey); err != nil {
+		return err
+	}
 	return nil
 }
 

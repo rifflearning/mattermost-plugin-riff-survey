@@ -2,6 +2,8 @@ package kvstore
 
 import (
 	"fmt"
+
+	"github.com/Brightscout/mattermost-plugin-survey/server/util"
 )
 
 const (
@@ -12,17 +14,21 @@ const (
 )
 
 func LatestSurveyKey(surveyID string) string {
-	return fmt.Sprintf("%s%s", LatestSurveyKeyPrefix, surveyID)
+	key := fmt.Sprintf("%s%s", LatestSurveyKeyPrefix, surveyID)
+	return util.GetKeyHash(key)
 }
 
 func SurveyKey(surveyID, surveyVersion string) string {
-	return fmt.Sprintf("%s%s_%s", SurveyKeyPrefix, surveyID, surveyVersion)
+	key := fmt.Sprintf("%s%s_%s", SurveyKeyPrefix, surveyID, surveyVersion)
+	return util.GetKeyHash(key)
 }
 
 func SurveyResponseKey(userID, meetingID, surveyID, surveyVersion string) string {
-	return fmt.Sprintf("%s%s_%s_%s_%s", SurveyResponseKeyPrefix, userID, meetingID, surveyID, surveyVersion)
+	key := fmt.Sprintf("%s%s_%s_%s_%s", SurveyResponseKeyPrefix, userID, meetingID, surveyID, surveyVersion)
+	return util.GetKeyHash(key)
 }
 
 func MeetingMetadataKey(meetingID string) string {
-	return fmt.Sprintf("%s%s", MeetingMetadataKeyPrefix, meetingID)
+	key := fmt.Sprintf("%s%s", MeetingMetadataKeyPrefix, meetingID)
+	return util.GetKeyHash(key)
 }
