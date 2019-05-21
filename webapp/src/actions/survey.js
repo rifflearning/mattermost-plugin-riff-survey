@@ -13,13 +13,6 @@ export const closeSurveyModal = () => (dispatch) => {
     });
 };
 
-export const setCurrentPostProps = (data) => (dispatch) => {
-    dispatch({
-        type: Constants.ACTION_TYPES.SET_CURRENT_POST_PROPS,
-        data,
-    });
-};
-
 export function getSurvey(surveyID, surveyVersion) {
     return async () => {
         let data;

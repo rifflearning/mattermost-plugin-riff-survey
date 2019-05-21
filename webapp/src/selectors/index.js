@@ -6,7 +6,10 @@ const isSurveyModalVisible = (state) => getPluginState(state).surveyModalVisible
 
 const currentPostProps = (state) => getPluginState(state).currentPostProps || {};
 
+const dashboardPath = (state) => getPluginState(state).dashboardPath || '';
+
 export default {
     currentPostProps,
+    dashboardPath,
     isSurveyModalVisible,
 };

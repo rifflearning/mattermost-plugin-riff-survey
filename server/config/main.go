@@ -33,8 +33,9 @@ var (
 )
 
 type Configuration struct {
-	BotUsername string `json:"BotUsername"`
-	Survey      string `json:"Survey"`
+	BotUsername   string `json:"BotUsername"`
+	Survey        string `json:"Survey"`
+	DashboardPath string `json:"DashboardPath"`
 
 	// Derived Attributes
 	BotUserID    string
@@ -70,6 +71,10 @@ func (c *Configuration) ProcessConfiguration() error {
 func (c *Configuration) IsValid() error {
 	if c.BotUsername == "" {
 		return errors.New("Bot username cannot be empty")
+	}
+
+	if c.DashboardPath == "" {
+		return errors.New("Dashboard path cannot be empty")
 	}
 
 	return nil

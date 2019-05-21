@@ -32,6 +32,9 @@ func executeGetSurvey(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	w.Write(survey.EncodeToByte())
+	if _, err := w.Write(survey.EncodeToByte()); err != nil {
+		return errors.Wrap(err, "failed to write data to HTTP response")
+	}
+
 	return nil
 }

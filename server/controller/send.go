@@ -53,8 +53,7 @@ func executeSendSurvey(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	if _, err := config.Mattermost.CreatePost(post); err != nil {
-		http.Error(w, "Error creating the survey post.", http.StatusInternalServerError)
-		return errors.Wrap(err, "Error creating survey post for channel: "+channel.Id)
+		return errors.Wrap(err, "failed to create survey post for the channel: "+channel.Id)
 	}
 
 	return nil

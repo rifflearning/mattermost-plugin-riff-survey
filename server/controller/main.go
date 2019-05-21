@@ -17,12 +17,12 @@ type Endpoint struct {
 // Endpoints is a map of endpoint key to endpoint object
 // Usage: getEndpointKey(GetMetadata): GetMetadata
 var Endpoints = map[string]*Endpoint{
-	getEndpointKey(sendSurvey): sendSurvey,
-	getEndpointKey(getSurvey):  getSurvey,
+	getEndpointKey(sendSurvey):       sendSurvey,
+	getEndpointKey(getSurvey):        getSurvey,
+	getEndpointKey(getDashboardPath): getDashboardPath,
 
 	// TODO: Create these endpoints
 	// getEndpointKey(submitSurveyResponse): submitSurveyResponse,
-	// getEndpointKey(getDashboardLink):     getDashboardLink,
 }
 
 func getEndpointKey(endpoint *Endpoint) string {

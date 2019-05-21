@@ -24,6 +24,18 @@ export default class Client {
         return this.doGet(url);
     };
 
+    getDashboardURL = (teamName, path) => {
+        let url = this.baseUrl;
+        if (teamName && path) {
+            url = `${this.baseUrl}/${teamName}${path}`;
+        }
+        return url;
+    };
+
+    getDashboardPath = () => {
+        return this.doGet(`${this.pluginUrl}/dashboard`);
+    };
+
     doGet = async (url, headers = {}) => {
         headers['X-Requested-With'] = 'XMLHttpRequest';
 

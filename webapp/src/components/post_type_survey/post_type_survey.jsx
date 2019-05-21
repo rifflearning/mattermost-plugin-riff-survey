@@ -9,6 +9,7 @@ import './styles.css';
 
 export default class PostTypeSurvey extends React.PureComponent {
     static propTypes = {
+        dashboardURL: PropTypes.string.isRequired,
         post: PropTypes.object.isRequired,
         currentUser: PropTypes.object.isRequired,
         setCurrentPostProps: PropTypes.func.isRequired,
@@ -27,7 +28,7 @@ export default class PostTypeSurvey extends React.PureComponent {
     };
 
     goToDashboard = () => {
-        // TODO: open dashboard page
+        window.location.href = this.props.dashboardURL;
     };
 
     renderSubmitted = () => {
