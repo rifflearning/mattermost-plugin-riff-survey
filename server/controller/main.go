@@ -18,9 +18,9 @@ type Endpoint struct {
 // Usage: getEndpointKey(GetMetadata): GetMetadata
 var Endpoints = map[string]*Endpoint{
 	getEndpointKey(sendSurvey): sendSurvey,
+	getEndpointKey(getSurvey):  getSurvey,
 
 	// TODO: Create these endpoints
-	// getEndpointKey(getSurveyQuestions):   getSurveyQuestions,
 	// getEndpointKey(submitSurveyResponse): submitSurveyResponse,
 	// getEndpointKey(getDashboardLink):     getDashboardLink,
 }
