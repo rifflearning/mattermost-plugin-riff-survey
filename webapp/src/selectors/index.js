@@ -4,6 +4,9 @@ const getPluginState = (state) => state[`plugins-${Constants.PLUGIN_NAME}`] || {
 
 const isSurveyModalVisible = (state) => getPluginState(state).surveyModalVisible || false;
 
+const currentPostProps = (state) => getPluginState(state).currentPostProps || {};
+
 export default {
+    currentPostProps,
     isSurveyModalVisible,
 };

@@ -1,4 +1,5 @@
 import request from 'superagent';
+import {buildQueryString} from 'mattermost-redux/utils/helpers';
 
 import Constants from '../constants';
 
@@ -14,8 +15,13 @@ export default class Client {
         this.apiUrl = `${this.baseUrl}/api/v4`;
     }
 
-    exampleRequest = async () => {
-        return this.doGet(`${this.url}/example`);
+    getSurvey = async (surveyID, surveyVersion) => {
+        const queryParams = {
+            survey_id: surveyID,
+            survey_version: surveyVersion,
+        };
+        const url = `${this.pluginUrl}/survey${buildQueryString(queryParams)}`;
+        return this.doGet(url);
     };
 
     doGet = async (url, headers = {}) => {

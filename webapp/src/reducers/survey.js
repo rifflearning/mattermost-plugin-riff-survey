@@ -10,3 +10,12 @@ export const surveyModalVisible = (state = false, action) => {
         return state;
     }
 };
+
+export const currentPostProps = (state = {}, action) => {
+    switch (action.type) {
+    case Constants.ACTION_TYPES.SET_CURRENT_POST_PROPS:
+        return action.data;
+    default:
+        return state;
+    }
+};

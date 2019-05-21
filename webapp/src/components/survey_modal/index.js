@@ -8,11 +8,12 @@ import SurveyModal from './survey_modal';
 
 const mapStateToProps = (state) => ({
     visible: Selectors.isSurveyModalVisible(state),
+    currentPostProps: Selectors.currentPostProps(state),
 });
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
     close: Actions.closeSurveyModal,
-    open: Actions.openSurveyModal,
+    getSurvey: Actions.getSurvey,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SurveyModal);

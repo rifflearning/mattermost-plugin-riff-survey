@@ -6,43 +6,45 @@ import {Button, ButtonGroup, Modal} from 'react-bootstrap';
 import QuestionTypeOpen from '../question_type_open';
 import QuestionTypeLikertScale from '../question_type_likert_scale';
 
-import './styles.css';
+import constants from '../../constants';
 
-// TODO: Use the values from DB instead
-const questionsList = [
-    {
-        type: '5-point-likert-scale',
-        text: 'I felt comfortable conversing using this medium.',
-    },
-    {
-        type: '5-point-likert-scale',
-        text: 'I felt comfortable participating in group discussions.',
-    },
-    {
-        type: '5-point-likert-scale',
-        text: 'I felt comfortable interacting with other group members.',
-    },
-    {
-        type: '5-point-likert-scale',
-        text: 'I was able to speak my mind in my group discussion.',
-    },
-    {
-        type: 'open',
-        text: 'Please add any other comments about the Riff Edu meeting experience.',
-    },
-];
+import './styles.css';
 
 export default class SurveyModal extends React.PureComponent {
     static propTypes = {
         theme: PropTypes.object.isRequired,
-        visible: PropTypes.bool,
-        close: PropTypes.func,
+        currentPostProps: PropTypes.object.isRequired,
+        visible: PropTypes.bool.isRequired,
+        close: PropTypes.func.isRequired,
+        getSurvey: PropTypes.func.isRequired,
     }
 
     constructor(props) {
         super(props);
         this.state = {
+            survey: {
+                title: '',
+                description: '',
+                questions: [],
+            },
         };
+    }
+
+    componentDidUpdate(prevProps) {
+        if (this.props.visible && !prevProps.visible) {
+            this.getSurvey();
+        }
+    }
+
+    getSurvey = async () => {
+        const {currentPostProps, getSurvey} = this.props;
+
+        const {data} = await getSurvey(currentPostProps.survey_id, currentPostProps.survey_version);
+        if (data) {
+            this.setState({
+                survey: data,
+            });
+        }
     }
 
     handleClose = () => {
@@ -56,24 +58,25 @@ export default class SurveyModal extends React.PureComponent {
 
     renderQuestions = () => {
         const {theme} = this.props;
+        const questionsList = this.state.survey.questions;
 
         return questionsList.map((question, idx) => {
             switch (question.type) {
-            case 'open':
+            case constants.QUESTION_TYPES.OPEN:
                 return (
                     <QuestionTypeOpen
                         index={idx + 1}
-                        key={question.text}
+                        key={question.id}
                         text={question.text}
                         theme={theme}
                     />
                 );
 
-            case '5-point-likert-scale':
+            case constants.QUESTION_TYPES.FIVE_POINT_LIKERT_SCALE:
                 return (
                     <QuestionTypeLikertScale
                         index={idx + 1}
-                        key={question.text}
+                        key={question.id}
                         text={question.text}
                         theme={theme}
                     />
@@ -86,6 +89,7 @@ export default class SurveyModal extends React.PureComponent {
     };
 
     render() {
+        const {survey} = this.state;
         const questions = this.renderQuestions();
         return (
             <Modal
@@ -99,12 +103,12 @@ export default class SurveyModal extends React.PureComponent {
                     closeLabel={'Close'}
                 >
                     <Modal.Title>
-                        {'Riff Meeting Survey'}
+                        {survey.title}
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
                     <p className='survey-banner-text'>
-                        {'Please tell us about your Riff meeting experience. We will ask you to take this short survey after each meeting, to see how your experience changes over time.'}
+                        {survey.description}
                     </p>
                     {questions}
                     <ButtonGroup className='float-right'>

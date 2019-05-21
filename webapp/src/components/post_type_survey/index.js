@@ -13,6 +13,7 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
     open: Actions.openSurveyModal,
+    setCurrentPostProps: Actions.setCurrentPostProps,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostTypeSurvey);

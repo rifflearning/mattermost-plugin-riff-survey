@@ -7,6 +7,7 @@ import (
 	"github.com/pkg/errors"
 
 	"github.com/Brightscout/mattermost-plugin-survey/server/config"
+	"github.com/Brightscout/mattermost-plugin-survey/server/platform"
 )
 
 var sendSurvey = &Endpoint{
@@ -31,6 +32,13 @@ func executeSendSurvey(w http.ResponseWriter, r *http.Request) error {
 		return errors.Wrap(appErr, "Unable to create DM Channel.")
 	}
 
+	surveyID := config.HardcodedSurveyID
+	latestSurveyInfo := platform.GetLatestSurveyInfo(surveyID)
+	if latestSurveyInfo == nil {
+		http.Error(w, "Survey does not exist.", http.StatusInternalServerError)
+		return errors.New("survey does not exist")
+	}
+
 	post := &model.Post{
 		UserId:    conf.BotUserID,
 		ChannelId: channel.Id,
@@ -39,6 +47,8 @@ func executeSendSurvey(w http.ResponseWriter, r *http.Request) error {
 		Props: model.StringInterface{
 			"from_webhook":      "true",
 			"override_username": config.OverrideUsername,
+			"survey_id":         surveyID,
+			"survey_version":    latestSurveyInfo.Version,
 		},
 	}
 

@@ -1,7 +1,8 @@
 import {combineReducers} from 'redux';
 
-import {surveyModalVisible} from './survey';
+import {currentPostProps, surveyModalVisible} from './survey';
 
 export default combineReducers({
+    currentPostProps,
     surveyModalVisible,
 });
