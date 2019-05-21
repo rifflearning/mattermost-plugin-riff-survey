@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 
 import {formatText, messageHtmlToComponent} from 'post-utils';
 
+import {Button} from 'react-bootstrap';
+
 import './styles.css';
 
 export default class PostTypeSurvey extends React.PureComponent {
@@ -27,34 +29,34 @@ export default class PostTypeSurvey extends React.PureComponent {
     };
 
     renderSubmitted = () => {
-        const message1 = `Thanks for your feedback @${this.props.currentUser.username}! Have you checked out`;
-        const dashboardLink = (
-            <p><a onClick={this.goToDashboard}>{'your Riff Stats'}</a></p>
-        );
-        const message2 = ' in the Dashboard?';
+        const message = `Thanks for your feedback @${this.props.currentUser.username}! Have you checked out your Riff Stats in the Dashboard?`;
         return (
-            <div className='same-line'>
-                {messageHtmlToComponent(formatText(message1, {atMentions: true}))}
-                {dashboardLink}
-                {messageHtmlToComponent(formatText(message2))}
+            <div>
+                {messageHtmlToComponent(formatText(message, {atMentions: true}))}
+                <Button
+                    bsStyle='primary'
+                    className='survey-action-button'
+                    onClick={this.goToDashboard}
+                >
+                    {'Click Here'}
+                </Button>
             </div>
         );
     };
 
     renderNotSubmitted = () => {
-        const message1 = `Hi @${this.props.currentUser.username} - Please`;
-        const modalLink = (
-            <p><a onClick={this.openModal}>{'tell us about the meeting'}</a></p>
-        );
-
-        // TODO: Get other meeting participants
-        const message2 = ' you just had? It only takes 30 seconds, and helps understand your experience over time.';
+        const message = `Hi @${this.props.currentUser.username} - Please tell us about the meeting you just had? It only takes 30 seconds, and helps understand your experience over time.`;
 
         return (
-            <div className='same-line'>
-                {messageHtmlToComponent(formatText(message1, {atMentions: true}))}
-                {modalLink}
-                {messageHtmlToComponent(formatText(message2, {atMentions: true}))}
+            <div>
+                {messageHtmlToComponent(formatText(message, {atMentions: true}))}
+                <Button
+                    bsStyle='primary'
+                    className='survey-action-button'
+                    onClick={this.openModal}
+                >
+                    {'Click Here'}
+                </Button>
             </div>
         );
     };
