@@ -19,7 +19,7 @@ const mapStateToProps = (state) => {
 };
 
 const mapDispatchToProps = (dispatch) => bindActionCreators({
-    open: Actions.openSurveyModal,
+    openSurveyModal: Actions.openSurveyModal,
     setCurrentPostProps: Actions.setCurrentPostProps,
 }, dispatch);
 

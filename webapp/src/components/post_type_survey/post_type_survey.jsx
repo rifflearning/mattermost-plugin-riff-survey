@@ -13,7 +13,7 @@ export default class PostTypeSurvey extends React.PureComponent {
         post: PropTypes.object.isRequired,
         currentUser: PropTypes.object.isRequired,
         setCurrentPostProps: PropTypes.func.isRequired,
-        open: PropTypes.func.isRequired,
+        openSurveyModal: PropTypes.func.isRequired,
     }
 
     constructor(props) {
@@ -24,7 +24,7 @@ export default class PostTypeSurvey extends React.PureComponent {
 
     openModal = () => {
         this.props.setCurrentPostProps(this.props.post.props);
-        this.props.open();
+        this.props.openSurveyModal();
     };
 
     goToDashboard = () => {
