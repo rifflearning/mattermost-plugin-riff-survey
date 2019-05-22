@@ -27,6 +27,8 @@ export default class SurveyModal extends React.PureComponent {
                 description: '',
                 questions: [],
             },
+            responses: {
+            },
         };
     }
 
@@ -39,10 +41,18 @@ export default class SurveyModal extends React.PureComponent {
     getSurvey = async () => {
         const {currentPostProps, getSurvey} = this.props;
 
+        // TODO: Get survey using meetingID instead
         const {data} = await getSurvey(currentPostProps.survey_id, currentPostProps.survey_version);
         if (data) {
+            const survey = data;
+            const responses = survey.questions.reduce((obj, question) => {
+                obj[question.id] = '';
+                return obj;
+            }, {});
+
             this.setState({
-                survey: data,
+                survey,
+                responses,
             });
         }
     }
@@ -56,29 +66,42 @@ export default class SurveyModal extends React.PureComponent {
         this.handleClose();
     };
 
+    handleUpdateQuestionResponse = (questionID, response) => {
+        this.setState((prevState) => {
+            const responses = {...prevState.responses};
+            responses[questionID] = response;
+            return {
+                responses,
+            };
+        });
+    };
+
     renderQuestions = () => {
         const {theme} = this.props;
         const questionsList = this.state.survey.questions;
 
         return questionsList.map((question, idx) => {
+            const baseProps = {
+                index: idx + 1,
+                id: question.id,
+                key: question.id,
+                text: question.text,
+                theme,
+                handleChange: this.handleUpdateQuestionResponse,
+            };
             switch (question.type) {
             case constants.QUESTION_TYPES.OPEN:
                 return (
                     <QuestionTypeOpen
-                        index={idx + 1}
-                        key={question.id}
-                        text={question.text}
-                        theme={theme}
+                        {...baseProps}
                     />
                 );
 
             case constants.QUESTION_TYPES.FIVE_POINT_LIKERT_SCALE:
                 return (
                     <QuestionTypeLikertScale
-                        index={idx + 1}
-                        key={question.id}
-                        text={question.text}
-                        theme={theme}
+                        {...baseProps}
+                        responses={constants.FIVE_POINT_LIKERT_SCALE_RESPONSES}
                     />
                 );
 

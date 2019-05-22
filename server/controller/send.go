@@ -32,6 +32,7 @@ func executeSendSurvey(w http.ResponseWriter, r *http.Request) error {
 		return errors.Wrap(appErr, "Unable to create DM Channel.")
 	}
 
+	// TODO: Get add meetingID to props instead of surveyID and get survey questions using meetingID
 	surveyID := config.HardcodedSurveyID
 	latestSurveyInfo := platform.GetLatestSurveyInfo(surveyID)
 	if latestSurveyInfo == nil {

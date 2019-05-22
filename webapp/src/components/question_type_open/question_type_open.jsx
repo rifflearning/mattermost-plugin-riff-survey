@@ -7,8 +7,10 @@ import './styles.css';
 
 export default class QuestionTypeOpen extends React.PureComponent {
     static propTypes = {
+        id: PropTypes.string.isRequired,
         text: PropTypes.string.isRequired,
-        index: PropTypes.number,
+        index: PropTypes.number.isRequired,
+        handleChange: PropTypes.func.isRequired,
     }
 
     constructor(props) {
@@ -19,8 +21,10 @@ export default class QuestionTypeOpen extends React.PureComponent {
     }
 
     handleChange = (e) => {
+        const value = e.target.value;
+        this.props.handleChange(this.props.id, value);
         this.setState({
-            remaining: Constants.OPEN_QUESTION_MAX_LENGTH - e.target.value.length,
+            remaining: Constants.OPEN_QUESTION_MAX_LENGTH - value.length,
         });
     };
 
