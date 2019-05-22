@@ -2,49 +2,39 @@ package controller
 
 import (
 	"net/http"
+	"strconv"
 
-	"github.com/mattermost/mattermost-server/model"
 	"github.com/pkg/errors"
 
-	"github.com/Brightscout/mattermost-plugin-survey/server/config"
+	"github.com/Brightscout/mattermost-plugin-survey/server/platform"
 )
 
-var sendSurvey = &Endpoint{
-	Path:         "/send",
+var getSurvey = &Endpoint{
+	Path:         "/survey",
 	Method:       http.MethodGet,
-	Execute:      executeSendSurvey,
+	Execute:      executeGetSurvey,
 	RequiresAuth: true,
 }
 
-func executeSendSurvey(w http.ResponseWriter, r *http.Request) error {
-	conf := config.GetConfig()
-	userID := r.URL.Query().Get("user_id")
-	meetingID := r.URL.Query().Get("meeting_id")
-
-	// TODO: verify that user is in the meeting
-
-	config.Mattermost.LogDebug("Send survey executed.", "userID", userID, "meetingID", meetingID)
-
-	channel, appErr := config.Mattermost.GetDirectChannel(conf.BotUserID, userID)
-	if appErr != nil {
-		http.Error(w, "Unable to create DM Channel.", http.StatusInternalServerError)
-		return errors.Wrap(appErr, "Unable to create DM Channel.")
+func executeGetSurvey(w http.ResponseWriter, r *http.Request) error {
+	surveyID := r.URL.Query().Get("survey_id")
+	surveyVersion := r.URL.Query().Get("survey_version")
+	surveyVersionInt, err := strconv.Atoi(surveyVersion)
+	if err != nil {
+		http.Error(w, "Invalid Survey Version.", http.StatusBadRequest)
+		return errors.Wrap(err, "invalid survey version")
 	}
 
-	post := &model.Post{
-		UserId:    conf.BotUserID,
-		ChannelId: channel.Id,
-		Type:      "custom_survey",
-		Message:   "Survey",
-		Props: model.StringInterface{
-			"from_webhook":      "true",
-			"override_username": config.OverrideUsername,
-		},
+	// TODO: Get survey questions using meetingID instead
+	survey := platform.GetSurvey(surveyID, surveyVersionInt)
+	if survey == nil {
+		http.Error(w, "Unable to get survey for requested id and version.", http.StatusBadRequest)
+		return errors.Wrap(err, "unable to get survey for requested id and version")
 	}
 
-	if _, err := config.Mattermost.CreatePost(post); err != nil {
-		http.Error(w, "Error creating the survey post.", http.StatusInternalServerError)
-		return errors.Wrap(err, "Error creating survey post for channel: "+channel.Id)
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := w.Write(survey.EncodeToByte()); err != nil {
+		return errors.Wrap(err, "failed to write data to HTTP response")
 	}
 
 	return nil
