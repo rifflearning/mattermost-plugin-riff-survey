@@ -4,8 +4,8 @@ import (
 	"github.com/Brightscout/mattermost-plugin-survey/server/model"
 )
 
-// Store allows the interaction with some kind of store.
-type Store interface {
+// SurveyStore allows to access surveys with some kind of store.
+type SurveyStore interface {
 	GetLatestSurveyInfo(id string) (*model.LatestSurveyInfo, error)
 	SaveLatestSurveyInfo(info *model.LatestSurveyInfo) error
 	GetSurvey(id string, version int) (*model.Survey, error)

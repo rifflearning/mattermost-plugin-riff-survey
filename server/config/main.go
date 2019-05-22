@@ -31,7 +31,7 @@ const (
 var (
 	config     atomic.Value
 	Mattermost plugin.API
-	Store      store.Store
+	Store      store.SurveyStore
 )
 
 type Configuration struct {
