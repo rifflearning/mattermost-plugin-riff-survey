@@ -64,6 +64,9 @@ func (s *Store) SaveMeetingMetadata(data *model.MeetingMetadata) error {
 }
 
 func (s *Store) SaveSurveyResponse(response *model.SurveyResponse) error {
-	// TODO: Implement this method
+	key := SurveyResponseKey(response.UserID, response.MeetingID, response.SurveyID, strconv.Itoa(response.SurveyVersion))
+	if err := config.Mattermost.KVSet(key, response.EncodeToByte()); err != nil {
+		return err
+	}
 	return nil
 }

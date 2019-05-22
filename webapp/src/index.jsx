@@ -1,8 +1,9 @@
 import PostTypeSurvey from './components/post_type_survey';
 import SurveyModal from './components/survey_modal';
 
-import reducer from './reducers';
+import Actions from './actions';
 import Constants from './constants';
+import reducer from './reducers';
 
 // Global Styles
 import './styles.css';
@@ -12,7 +13,8 @@ import './styles.css';
 // our plugin components.
 //
 class PluginClass {
-    initialize(registry) {
+    initialize(registry, store) {
+        store.dispatch(Actions.getDashboardPath());
         registry.registerRootComponent(SurveyModal);
         registry.registerPostTypeComponent(
             'custom_survey',

@@ -24,6 +24,8 @@ const (
 	OverrideUsername = "Riff Bot"
 
 	HardcodedSurveyID = "f298903f8a80054ba09e342d0d9780635d3675a2"
+
+	PropSurveySubmitted = "submitted"
 )
 
 var (
@@ -33,8 +35,9 @@ var (
 )
 
 type Configuration struct {
-	BotUsername string `json:"BotUsername"`
-	Survey      string `json:"Survey"`
+	BotUsername   string `json:"BotUsername"`
+	Survey        string `json:"Survey"`
+	DashboardPath string `json:"DashboardPath"`
 
 	// Derived Attributes
 	BotUserID    string
@@ -70,6 +73,10 @@ func (c *Configuration) ProcessConfiguration() error {
 func (c *Configuration) IsValid() error {
 	if c.BotUsername == "" {
 		return errors.New("Bot username cannot be empty")
+	}
+
+	if c.DashboardPath == "" {
+		return errors.New("Dashboard path cannot be empty")
 	}
 
 	return nil
