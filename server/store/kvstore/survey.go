@@ -28,7 +28,7 @@ func (s *Store) GetLatestSurveyInfo(id string) (*model.LatestSurveyInfo, error) 
 }
 
 func (s *Store) SaveLatestSurveyInfo(info *model.LatestSurveyInfo) error {
-	key := LatestSurveyKey(info.ID)
+	key := LatestSurveyKey(info.SurveyID)
 	if err := config.Mattermost.KVSet(key, info.EncodeToByte()); err != nil {
 		return err
 	}

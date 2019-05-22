@@ -132,9 +132,9 @@ type MeetingMetadata struct {
 
 // LatestSurveyInfo stores the latest version information for a survey
 type LatestSurveyInfo struct {
-	Type    string `json:"type"`
-	ID      string `json:"id"`
-	Version int    `json:"version"`
+	Type          string `json:"type"`
+	SurveyID      string `json:"survey_id"`
+	SurveyVersion int    `json:"survey_version"`
 }
 
 func (info *LatestSurveyInfo) PreSave() *LatestSurveyInfo {

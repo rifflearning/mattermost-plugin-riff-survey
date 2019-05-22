@@ -26,7 +26,7 @@ func SaveSurvey(survey *model.Survey) error {
 	currentSurveyVersion := 0
 
 	if latestSurveyInfo := GetLatestSurveyInfo(survey.ID); latestSurveyInfo != nil {
-		currentSurveyVersion = latestSurveyInfo.Version
+		currentSurveyVersion = latestSurveyInfo.SurveyVersion
 
 		// Check for existing survey in DB
 		if s := GetSurvey(survey.ID, currentSurveyVersion); s != nil && s.Equals(survey) {
@@ -64,8 +64,8 @@ func GetLatestSurveyInfo(id string) *model.LatestSurveyInfo {
 // SaveLatestSurveyInfo saves the latest survey information for a survey with a given id and version.
 func SaveLatestSurveyInfo(id string, version int) error {
 	info := &model.LatestSurveyInfo{
-		ID:      id,
-		Version: version,
+		SurveyID:      id,
+		SurveyVersion: version,
 	}
 	info = info.PreSave()
 	if err := config.Store.SaveLatestSurveyInfo(info); err != nil {
@@ -121,7 +121,7 @@ func SendSurveyPost(userID, meetingID string) error {
 			"override_username": config.OverrideUsername,
 			"meeting_id":        meetingID,
 			"survey_id":         surveyID,
-			"survey_version":    latestSurveyInfo.Version,
+			"survey_version":    latestSurveyInfo.SurveyVersion,
 		},
 	}
 
