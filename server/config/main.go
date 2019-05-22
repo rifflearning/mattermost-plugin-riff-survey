@@ -24,6 +24,8 @@ const (
 	OverrideUsername = "Riff Bot"
 
 	HardcodedSurveyID = "f298903f8a80054ba09e342d0d9780635d3675a2"
+
+	PropSurveySubmitted = "submitted"
 )
 
 var (

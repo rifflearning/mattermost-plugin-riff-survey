@@ -13,7 +13,8 @@ import './styles.css';
 export default class SurveyModal extends React.PureComponent {
     static propTypes = {
         theme: PropTypes.object.isRequired,
-        currentPostProps: PropTypes.object.isRequired,
+        surveyPostID: PropTypes.string.isRequired,
+        surveyPostProps: PropTypes.object.isRequired,
         visible: PropTypes.bool.isRequired,
         close: PropTypes.func.isRequired,
         getSurvey: PropTypes.func.isRequired,
@@ -42,10 +43,10 @@ export default class SurveyModal extends React.PureComponent {
     }
 
     getSurvey = async () => {
-        const {currentPostProps, getSurvey} = this.props;
+        const {surveyPostProps, getSurvey} = this.props;
 
         // TODO: Get survey using meetingID instead
-        const {data} = await getSurvey(currentPostProps.survey_id, currentPostProps.survey_version);
+        const {data} = await getSurvey(surveyPostProps.survey_id, surveyPostProps.survey_version);
         if (data) {
             const survey = data;
             const responses = survey.questions.reduce((obj, question) => {
@@ -66,9 +67,9 @@ export default class SurveyModal extends React.PureComponent {
 
     handleSubmit = () => {
         const {survey, responses} = this.state;
-        const {currentPostProps} = this.props;
-        const meetingID = currentPostProps.meeting_id;
-        this.props.submitSurveyResponses(meetingID, survey.id, survey.version, responses);
+        const {surveyPostProps, surveyPostID} = this.props;
+        const meetingID = surveyPostProps.meeting_id;
+        this.props.submitSurveyResponses(surveyPostID, meetingID, survey.id, survey.version, responses);
         this.handleClose();
     };
 

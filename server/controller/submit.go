@@ -19,7 +19,7 @@ var submitSurveyResponse = &Endpoint{
 }
 
 func executeSubmitSurveyResponse(w http.ResponseWriter, r *http.Request) error {
-	// TODO: Get postID as query parameter and update original post
+	surveyPostID := r.URL.Query().Get("survey_post_id")
 
 	response := &model.SurveyResponse{}
 	decoder := json.NewDecoder(r.Body)
@@ -30,7 +30,7 @@ func executeSubmitSurveyResponse(w http.ResponseWriter, r *http.Request) error {
 
 	response.UserID = r.Header.Get(config.HeaderMattermostUserID)
 
-	if err := platform.SubmitSurveyResponse(response); err != nil {
+	if err := platform.SubmitSurveyResponse(surveyPostID, response); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return err
 	}

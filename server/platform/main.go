@@ -75,12 +75,25 @@ func SaveLatestSurveyInfo(id string, version int) error {
 }
 
 // SubmitSurveyResponse saves the survey response to the DB.
-func SubmitSurveyResponse(response *model.SurveyResponse) error {
+func SubmitSurveyResponse(surveyPostID string, response *model.SurveyResponse) error {
 	response = response.PreSave()
 	if err := config.Store.SaveSurveyResponse(response); err != nil {
 		config.Mattermost.LogError("Failed to save the survey response.", "Error", err.Error())
 		return err
 	}
+
+	surveyPost, appErr := config.Mattermost.GetPost(surveyPostID)
+	if appErr != nil {
+		config.Mattermost.LogError("Failed to get the survey post.", "Error", appErr.Error())
+		return appErr
+	}
+
+	surveyPost.AddProp(config.PropSurveySubmitted, true)
+	if _, appErr := config.Mattermost.UpdatePost(surveyPost); appErr != nil {
+		config.Mattermost.LogError("Failed to update the survey post.", "Error", appErr.Error())
+		return appErr
+	}
+
 	return nil
 }
 

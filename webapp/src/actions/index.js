@@ -1,5 +1,5 @@
 import {closeSurveyModal, getSurvey, openSurveyModal, submitSurveyResponses} from './survey';
-import {setCurrentPostProps} from './post';
+import {setCurrentPostID, setCurrentPostProps} from './post';
 import {getDashboardPath} from './dashboard';
 
 export default {
@@ -7,6 +7,7 @@ export default {
     getDashboardPath,
     getSurvey,
     openSurveyModal,
+    setCurrentPostID,
     setCurrentPostProps,
     submitSurveyResponses,
 };

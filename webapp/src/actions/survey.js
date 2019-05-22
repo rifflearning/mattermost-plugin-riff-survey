@@ -26,11 +26,11 @@ export function getSurvey(surveyID, surveyVersion) {
     };
 }
 
-export function submitSurveyResponses(meetingID, surveyID, surveyVersion, responses) {
+export function submitSurveyResponses(surveyPostID, meetingID, surveyID, surveyVersion, responses) {
     return async () => {
         let data;
         try {
-            data = await Client.submitSurveyResponses(meetingID, surveyID, surveyVersion, responses);
+            data = await Client.submitSurveyResponses(surveyPostID, meetingID, surveyID, surveyVersion, responses);
         } catch (error) {
             return {data: null, error};
         }

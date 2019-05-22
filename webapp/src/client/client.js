@@ -36,8 +36,11 @@ export default class Client {
         return this.doGet(`${this.pluginUrl}/dashboard`);
     };
 
-    submitSurveyResponses = (meetingID, surveyID, surveyVersion, responses) => {
-        const url = `${this.pluginUrl}/submit`;
+    submitSurveyResponses = (surveyPostID, meetingID, surveyID, surveyVersion, responses) => {
+        const queryParams = {
+            survey_post_id: surveyPostID,
+        };
+        const url = `${this.pluginUrl}/submit${buildQueryString(queryParams)}`;
         const body = {
             meeting_id: meetingID,
             survey_id: surveyID,
