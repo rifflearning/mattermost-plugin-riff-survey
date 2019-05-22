@@ -39,6 +39,7 @@ func executeSendSurvey(w http.ResponseWriter, r *http.Request) error {
 		return errors.New("survey does not exist")
 	}
 
+	// TODO: Refactor this to platform.CreateSurveyPost
 	post := &model.Post{
 		UserId:    conf.BotUserID,
 		ChannelId: channel.Id,
