@@ -70,3 +70,13 @@ func SaveLatestSurveyInfo(id string, version int) error {
 	}
 	return nil
 }
+
+// SubmitSurveyResponse saves the survey response to the DB.
+func SubmitSurveyResponse(response *model.SurveyResponse) error {
+	response = response.PreSave()
+	if err := config.Store.SaveSurveyResponse(response); err != nil {
+		config.Mattermost.LogError("Failed to save the survey response.", "Error", err.Error())
+		return err
+	}
+	return nil
+}
