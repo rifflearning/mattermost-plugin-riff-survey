@@ -6,32 +6,26 @@ import (
 	serverModel "github.com/mattermost/mattermost-server/model"
 )
 
-type ValueType string
-
 const (
-	TypeSurvey           ValueType = "survey"
-	TypeSurveyResponse   ValueType = "survey_response"
-	TypeMeetingMetadata  ValueType = "meeting_metadata"
-	TypeLatestSurveyInfo ValueType = "latest_survey_info"
-)
+	TypeSurvey           = "survey"
+	TypeSurveyResponse   = "survey_response"
+	TypeMeetingMetadata  = "meeting_metadata"
+	TypeLatestSurveyInfo = "latest_survey_info"
 
-type QuestionType string
-
-const (
-	TypeOpen                 QuestionType = "open"
-	TypeFivePointLikertScale QuestionType = "five-point-likert-scale"
+	QuestionTypeOpen                 = "open"
+	QuestionTypeFivePointLikertScale = "five-point-likert-scale"
 )
 
 // Survey stores a survey question
 type SurveyQuestion struct {
-	ID   string       `json:"id"`
-	Type QuestionType `json:"type"`
-	Text string       `json:"text"`
+	ID   string `json:"id"`
+	Type string `json:"type"`
+	Text string `json:"text"`
 }
 
 // Survey stores all needed information for a survey
 type Survey struct {
-	Type        ValueType         `json:"type"`
+	Type        string            `json:"type"`
 	ID          string            `json:"id"`
 	Version     int               `json:"version"`
 	CreatedAt   int64             `json:"created_at"`
@@ -96,7 +90,7 @@ func DecodeSurveyFromByte(b []byte) *Survey {
 
 // SurveyResponse records the users responses to the survey questions
 type SurveyResponse struct {
-	Type          ValueType
+	Type          string
 	UserID        string
 	MeetingID     string
 	SurveyID      string
@@ -107,7 +101,7 @@ type SurveyResponse struct {
 
 // MeetingMetadata stores the survey metadata for a  meeting
 type MeetingMetadata struct {
-	Type          ValueType
+	Type          string
 	MeetingID     string
 	SurveyID      string
 	SurveyVersion int
@@ -116,9 +110,9 @@ type MeetingMetadata struct {
 
 // LatestSurveyInfo stores the latest version information for a survey
 type LatestSurveyInfo struct {
-	Type    ValueType `json:"type"`
-	ID      string    `json:"id"`
-	Version int       `json:"version"`
+	Type    string `json:"type"`
+	ID      string `json:"id"`
+	Version int    `json:"version"`
 }
 
 func (info *LatestSurveyInfo) PreSave() *LatestSurveyInfo {
