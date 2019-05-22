@@ -24,6 +24,8 @@ export default class SurveyModal extends React.PureComponent {
         super(props);
         this.state = {
             survey: {
+                id: '',
+                version: '',
                 title: '',
                 description: '',
                 questions: [],
@@ -63,12 +65,10 @@ export default class SurveyModal extends React.PureComponent {
     };
 
     handleSubmit = () => {
-        const {responses} = this.state;
+        const {survey, responses} = this.state;
         const {currentPostProps} = this.props;
         const meetingID = currentPostProps.meeting_id;
-        const surveyID = currentPostProps.survey_id;
-        const surveyVersion = currentPostProps.survey_version;
-        this.props.submitSurveyResponses(meetingID, surveyID, surveyVersion, responses);
+        this.props.submitSurveyResponses(meetingID, survey.id, survey.version, responses);
         this.handleClose();
     };
 

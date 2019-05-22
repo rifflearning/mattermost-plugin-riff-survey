@@ -1,6 +1,9 @@
 package platform
 
 import (
+	serverModel "github.com/mattermost/mattermost-server/model"
+	"github.com/pkg/errors"
+
 	"github.com/Brightscout/mattermost-plugin-survey/server/config"
 	"github.com/Brightscout/mattermost-plugin-survey/server/model"
 )
@@ -78,5 +81,40 @@ func SubmitSurveyResponse(response *model.SurveyResponse) error {
 		config.Mattermost.LogError("Failed to save the survey response.", "Error", err.Error())
 		return err
 	}
+	return nil
+}
+
+func SendSurveyPost(userID, meetingID string) error {
+	conf := config.GetConfig()
+	channel, appErr := config.Mattermost.GetDirectChannel(conf.BotUserID, userID)
+	if appErr != nil {
+		return errors.Wrap(appErr, "Unable to create DM Channel.")
+	}
+
+	// TODO: Get add meetingID to props instead of surveyID and get survey questions using meetingID
+	surveyID := config.HardcodedSurveyID
+	latestSurveyInfo := GetLatestSurveyInfo(surveyID)
+	if latestSurveyInfo == nil {
+		return errors.New("survey does not exist")
+	}
+
+	post := &serverModel.Post{
+		UserId:    conf.BotUserID,
+		ChannelId: channel.Id,
+		Type:      "custom_survey",
+		Message:   "Survey",
+		Props: serverModel.StringInterface{
+			"from_webhook":      "true",
+			"override_username": config.OverrideUsername,
+			"meeting_id":        meetingID,
+			"survey_id":         surveyID,
+			"survey_version":    latestSurveyInfo.Version,
+		},
+	}
+
+	if _, err := config.Mattermost.CreatePost(post); err != nil {
+		return errors.Wrap(err, "failed to create survey post for the channel: "+channel.Id)
+	}
+
 	return nil
 }
