@@ -49,6 +49,7 @@ func executeSendSurvey(w http.ResponseWriter, r *http.Request) error {
 		Props: model.StringInterface{
 			"from_webhook":      "true",
 			"override_username": config.OverrideUsername,
+			"meeting_id":        meetingID,
 			"survey_id":         surveyID,
 			"survey_version":    latestSurveyInfo.Version,
 		},

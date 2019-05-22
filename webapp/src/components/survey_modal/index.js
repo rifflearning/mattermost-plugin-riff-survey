@@ -14,6 +14,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => bindActionCreators({
     close: Actions.closeSurveyModal,
     getSurvey: Actions.getSurvey,
+    submitSurveyResponses: Actions.submitSurveyResponses,
 }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(SurveyModal);

@@ -36,6 +36,17 @@ export default class Client {
         return this.doGet(`${this.pluginUrl}/dashboard`);
     };
 
+    submitSurveyResponses = (meetingID, surveyID, surveyVersion, responses) => {
+        const url = `${this.pluginUrl}/submit`;
+        const body = {
+            meeting_id: meetingID,
+            survey_id: surveyID,
+            survey_version: surveyVersion,
+            responses,
+        };
+        return this.doPost(url, body);
+    };
+
     doGet = async (url, headers = {}) => {
         headers['X-Requested-With'] = 'XMLHttpRequest';
 
