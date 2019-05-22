@@ -11,6 +11,15 @@ export const surveyModalVisible = (state = false, action) => {
     }
 };
 
+export const currentPostID = (state = '', action) => {
+    switch (action.type) {
+    case Constants.ACTION_TYPES.SET_CURRENT_POST_ID:
+        return action.data;
+    default:
+        return state;
+    }
+};
+
 export const currentPostProps = (state = {}, action) => {
     switch (action.type) {
     case Constants.ACTION_TYPES.SET_CURRENT_POST_PROPS:

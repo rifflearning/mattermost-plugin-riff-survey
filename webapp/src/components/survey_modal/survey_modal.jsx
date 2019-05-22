@@ -13,19 +13,25 @@ import './styles.css';
 export default class SurveyModal extends React.PureComponent {
     static propTypes = {
         theme: PropTypes.object.isRequired,
-        currentPostProps: PropTypes.object.isRequired,
+        surveyPostID: PropTypes.string.isRequired,
+        surveyPostProps: PropTypes.object.isRequired,
         visible: PropTypes.bool.isRequired,
         close: PropTypes.func.isRequired,
         getSurvey: PropTypes.func.isRequired,
+        submitSurveyResponses: PropTypes.func.isRequired,
     }
 
     constructor(props) {
         super(props);
         this.state = {
             survey: {
+                id: '',
+                version: '',
                 title: '',
                 description: '',
                 questions: [],
+            },
+            responses: {
             },
         };
     }
@@ -37,12 +43,20 @@ export default class SurveyModal extends React.PureComponent {
     }
 
     getSurvey = async () => {
-        const {currentPostProps, getSurvey} = this.props;
+        const {surveyPostProps, getSurvey} = this.props;
 
-        const {data} = await getSurvey(currentPostProps.survey_id, currentPostProps.survey_version);
+        // TODO: Get survey using meetingID instead
+        const {data} = await getSurvey(surveyPostProps.survey_id, surveyPostProps.survey_version);
         if (data) {
+            const survey = data;
+            const responses = survey.questions.reduce((obj, question) => {
+                obj[question.id] = '';
+                return obj;
+            }, {});
+
             this.setState({
-                survey: data,
+                survey,
+                responses,
             });
         }
     }
@@ -52,8 +66,21 @@ export default class SurveyModal extends React.PureComponent {
     };
 
     handleSubmit = () => {
-        // TODO: API calls
+        const {survey, responses} = this.state;
+        const {surveyPostProps, surveyPostID} = this.props;
+        const meetingID = surveyPostProps.meeting_id;
+        this.props.submitSurveyResponses(surveyPostID, meetingID, survey.id, survey.version, responses);
         this.handleClose();
+    };
+
+    handleUpdateQuestionResponse = (questionID, response) => {
+        this.setState((prevState) => {
+            const responses = {...prevState.responses};
+            responses[questionID] = response;
+            return {
+                responses,
+            };
+        });
     };
 
     renderQuestions = () => {
@@ -61,24 +88,27 @@ export default class SurveyModal extends React.PureComponent {
         const questionsList = this.state.survey.questions;
 
         return questionsList.map((question, idx) => {
+            const baseProps = {
+                index: idx + 1,
+                id: question.id,
+                key: question.id,
+                text: question.text,
+                theme,
+                handleChange: this.handleUpdateQuestionResponse,
+            };
             switch (question.type) {
             case constants.QUESTION_TYPES.OPEN:
                 return (
                     <QuestionTypeOpen
-                        index={idx + 1}
-                        key={question.id}
-                        text={question.text}
-                        theme={theme}
+                        {...baseProps}
                     />
                 );
 
             case constants.QUESTION_TYPES.FIVE_POINT_LIKERT_SCALE:
                 return (
                     <QuestionTypeLikertScale
-                        index={idx + 1}
-                        key={question.id}
-                        text={question.text}
-                        theme={theme}
+                        {...baseProps}
+                        responses={constants.FIVE_POINT_LIKERT_SCALE_RESPONSES}
                     />
                 );
 

@@ -25,6 +25,7 @@ func executeGetSurvey(w http.ResponseWriter, r *http.Request) error {
 		return errors.Wrap(err, "invalid survey version")
 	}
 
+	// TODO: Get survey questions using meetingID instead
 	survey := platform.GetSurvey(surveyID, surveyVersionInt)
 	if survey == nil {
 		http.Error(w, "Unable to get survey for requested id and version.", http.StatusBadRequest)

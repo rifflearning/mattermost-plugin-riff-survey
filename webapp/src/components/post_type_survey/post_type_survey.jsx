@@ -12,6 +12,7 @@ export default class PostTypeSurvey extends React.PureComponent {
         dashboardURL: PropTypes.string.isRequired,
         post: PropTypes.object.isRequired,
         currentUser: PropTypes.object.isRequired,
+        setCurrentPostID: PropTypes.func.isRequired,
         setCurrentPostProps: PropTypes.func.isRequired,
         openSurveyModal: PropTypes.func.isRequired,
     }
@@ -23,6 +24,7 @@ export default class PostTypeSurvey extends React.PureComponent {
     }
 
     openModal = () => {
+        this.props.setCurrentPostID(this.props.post.id);
         this.props.setCurrentPostProps(this.props.post.props);
         this.props.openSurveyModal();
     };

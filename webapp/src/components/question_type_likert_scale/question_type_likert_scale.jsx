@@ -8,26 +8,13 @@ import './styles.css';
 
 export default class QuestionTypeLikertScale extends React.PureComponent {
     static propTypes = {
+        id: PropTypes.string.isRequired,
         text: PropTypes.string.isRequired,
         theme: PropTypes.object.isRequired,
-        index: PropTypes.number,
-        responses: PropTypes.array,
-        handleChange: PropTypes.func,
+        index: PropTypes.number.isRequired,
+        responses: PropTypes.array.isRequired,
+        handleChange: PropTypes.func.isRequired,
     }
-
-    // TODO: Pass these as props and make these required
-    static defaultProps = {
-        responses: [
-            {value: '1', text: 'Strongly Agree'},
-            {value: '2', text: 'Agree'},
-            {value: '3', text: 'Neutral'},
-            {value: '4', text: 'Disagree'},
-            {value: '5', text: 'Strongly Disagree'},
-        ],
-        handleChange: (val) => {
-            console.log(val); // eslint-disable-line no-console
-        },
-    };
 
     constructor(props) {
         super(props);
@@ -39,7 +26,7 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
 
     handleChange = (evt) => {
         const selectedValue = evt.target.value;
-        this.props.handleChange(selectedValue);
+        this.props.handleChange(this.props.id, selectedValue);
         this.setState({
             selectedValue,
         });
@@ -58,7 +45,7 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
     }
 
     render() {
-        const {index, responses, text, theme} = this.props;
+        const {id, index, responses, text, theme} = this.props;
         const {hoveredValue, selectedValue} = this.state;
         const style = getStyle(theme);
 
@@ -72,10 +59,10 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
 
             return (
                 <ControlLabel
-                    key={index + response.value}
+                    key={id + response.value}
                     className='likert-option'
                     style={optionStyle}
-                    htmlFor={`${index}${idx}`}
+                    htmlFor={`${id}${idx}`}
                     data-value={response.value}
                     onMouseOver={this.handleMouseEnter}
                     onMouseOut={this.handleMouseLeave}
@@ -83,8 +70,8 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
                     <Radio
                         className='display-none'
                         value={response.value}
-                        name={index}
-                        id={`${index}${idx}`}
+                        name={id}
+                        id={`${id}${idx}`}
                         onClick={this.handleChange}
                     />
                     <span className='likert-option-label'>{response.text}</span>

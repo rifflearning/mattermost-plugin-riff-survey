@@ -25,3 +25,16 @@ export function getSurvey(surveyID, surveyVersion) {
         return {data, error: null};
     };
 }
+
+export function submitSurveyResponses(surveyPostID, meetingID, surveyID, surveyVersion, responses) {
+    return async () => {
+        let data;
+        try {
+            data = await Client.submitSurveyResponses(surveyPostID, meetingID, surveyID, surveyVersion, responses);
+        } catch (error) {
+            return {data: null, error};
+        }
+
+        return {data, error: null};
+    };
+}
