@@ -130,6 +130,27 @@ type MeetingMetadata struct {
 	UserResponded map[string]bool
 }
 
+func (m *MeetingMetadata) PreSave() *MeetingMetadata {
+	m.Type = TypeMeetingMetadata
+	return m
+}
+
+// EncodeToByte returns a meeting metadata as a byte array
+func (m *MeetingMetadata) EncodeToByte() []byte {
+	b, _ := json.Marshal(m)
+	return b
+}
+
+// DecodeMeetingMetadataFromByte tries to create a meeting metadata from a byte array
+func DecodeMeetingMetadataFromByte(b []byte) *MeetingMetadata {
+	m := MeetingMetadata{}
+	err := json.Unmarshal(b, &m)
+	if err != nil {
+		return nil
+	}
+	return &m
+}
+
 // LatestSurveyInfo stores the latest version information for a survey
 type LatestSurveyInfo struct {
 	Type          string `json:"type"`
