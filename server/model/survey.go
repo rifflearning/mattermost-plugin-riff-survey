@@ -123,11 +123,11 @@ func DecodeSurveyResponseFromByte(b []byte) *SurveyResponse {
 
 // MeetingMetadata stores the survey metadata for a  meeting
 type MeetingMetadata struct {
-	Type          string
-	MeetingID     string
-	SurveyID      string
-	SurveyVersion int
-	UserResponded map[string]bool
+	Type          string          `json:"type"`
+	MeetingID     string          `json:"meeting_id"`
+	SurveyID      string          `json:"survey_id"`
+	SurveyVersion int             `json:"survey_version"`
+	UserResponded map[string]bool `json:"user_responded"`
 }
 
 func (m *MeetingMetadata) PreSave() *MeetingMetadata {
