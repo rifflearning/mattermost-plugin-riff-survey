@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {Button, ButtonGroup, Modal} from 'react-bootstrap';
+import {Alert, Button, ButtonGroup, Modal} from 'react-bootstrap';
 
 import QuestionTypeOpen from '../question_type_open';
 import QuestionTypeLikertScale from '../question_type_likert_scale';
@@ -19,7 +19,7 @@ export default class SurveyModal extends React.PureComponent {
         close: PropTypes.func.isRequired,
         getSurvey: PropTypes.func.isRequired,
         submitSurveyResponses: PropTypes.func.isRequired,
-    }
+    };
 
     constructor(props) {
         super(props);
@@ -33,6 +33,9 @@ export default class SurveyModal extends React.PureComponent {
             },
             responses: {
             },
+            loading: false,
+            loadingSubmit: true,
+            serverError: false,
         };
     }
 
@@ -119,8 +122,68 @@ export default class SurveyModal extends React.PureComponent {
     };
 
     render() {
-        const {survey} = this.state;
+        const {survey, loading, loadingSubmit, serverError} = this.state;
+        const loadingScreen = (
+            <div
+                className='loading-screen'
+                style={{position: 'relative'}}
+            >
+                <div className='loading__content'>
+                    <h3>
+                        {'Loading'}
+                    </h3>
+                    <div className='round round-1'/>
+                    <div className='round round-2'/>
+                    <div className='round round-3'/>
+                </div>
+            </div>
+        );
         const questions = this.renderQuestions();
+        const content = (
+            <React.Fragment>
+                <p className='survey-banner-text'>
+                    {survey.description}
+                </p>
+                {questions}
+                <div className='clearfix'>
+                    <ButtonGroup className='float-right'>
+                        <Button
+                            type='button'
+                            bsStyle='secondary'
+                            onClick={this.handleClose}
+                            disabled={loadingSubmit}
+                        >
+                            {'Cancel'}
+                        </Button>
+                        <Button
+                            type='submit'
+                            bsStyle='primary'
+                            className='submit-survey-btn'
+                            onClick={this.handleSubmit}
+                            disabled={loadingSubmit}
+                        >
+                            {loadingSubmit && (
+                                <span
+                                    className='fa fa-spinner fa-fw fa-pulse spinner'
+                                    title={'Loading Icon'}
+                                />
+                            )}
+                            {'Submit'}
+                        </Button>
+                    </ButtonGroup>
+                </div>
+                {serverError && (
+                    <Alert bsStyle='warning'>
+                        <i
+                            className='fa fa-warning'
+                            title='Server Error'
+                        />
+                        {' There was some error while submitting your response. Please try again later. If the problem persists, contact your System Administrator.'}
+                    </Alert>
+                )}
+            </React.Fragment>
+        );
+
         return (
             <Modal
                 show={this.props.visible}
@@ -137,27 +200,15 @@ export default class SurveyModal extends React.PureComponent {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p className='survey-banner-text'>
-                        {survey.description}
-                    </p>
-                    {questions}
-                    <ButtonGroup className='float-right'>
-                        <Button
-                            type='button'
-                            bsStyle='secondary'
-                            onClick={this.handleClose}
-                        >
-                            {'Cancel'}
-                        </Button>
-                        <Button
-                            type='submit'
-                            bsStyle='primary'
-                            className='submit-survey-btn'
-                            onClick={this.handleSubmit}
-                        >
-                            {'Submit'}
-                        </Button>
-                    </ButtonGroup>
+                    {loading && loadingScreen}
+                    <div>
+                        <i
+                            className='fa fa-warning'
+                            title='Server Error'
+                        />
+                        {' There was some error while fetching survey. Please try again later. If the problem persists, contact your System Administrator.'}
+                    </div>
+                    {!loading && content}
                 </Modal.Body>
             </Modal>
         );
