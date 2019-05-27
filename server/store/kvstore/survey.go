@@ -71,6 +71,24 @@ func (s *KVStore) SaveMeetingMetadata(data *model.MeetingMetadata) error {
 	return nil
 }
 
+func (s *KVStore) GetUserMeetingMetadata(userID, meetingID string) (*model.UserMeetingMetadata, error) {
+	key := UserMeetingMetadataKey(userID, meetingID)
+	b, err := config.Mattermost.KVGet(key)
+	if err != nil {
+		return nil, err
+	}
+	u := model.DecodeUserMeetingMetadataFromByte(b)
+	return u, nil
+}
+
+func (s *KVStore) SaveUserMeetingMetadata(data *model.UserMeetingMetadata) error {
+	key := UserMeetingMetadataKey(data.UserID, data.MeetingID)
+	if err := config.Mattermost.KVSet(key, data.EncodeToByte()); err != nil {
+		return err
+	}
+	return nil
+}
+
 func (s *KVStore) SaveSurveyResponse(response *model.SurveyResponse) error {
 	key := SurveyResponseKey(response.UserID, response.MeetingID, response.SurveyID, strconv.Itoa(response.SurveyVersion))
 	if err := config.Mattermost.KVSet(key, response.EncodeToByte()); err != nil {

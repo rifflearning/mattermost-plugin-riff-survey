@@ -7,10 +7,11 @@ import (
 )
 
 const (
-	TypeSurvey           = "survey"
-	TypeSurveyResponse   = "survey_response"
-	TypeMeetingMetadata  = "meeting_metadata"
-	TypeLatestSurveyInfo = "latest_survey_info"
+	TypeSurvey              = "survey"
+	TypeSurveyResponse      = "survey_response"
+	TypeMeetingMetadata     = "meeting_metadata"
+	TypeLatestSurveyInfo    = "latest_survey_info"
+	TypeUserMeetingMetadata = "user_meeting_metadata"
 
 	QuestionTypeOpen                 = "open"
 	QuestionTypeFivePointLikertScale = "five-point-likert-scale"
@@ -123,11 +124,10 @@ func DecodeSurveyResponseFromByte(b []byte) *SurveyResponse {
 
 // MeetingMetadata stores the survey metadata for a  meeting
 type MeetingMetadata struct {
-	Type          string          `json:"type"`
-	MeetingID     string          `json:"meeting_id"`
-	SurveyID      string          `json:"survey_id"`
-	SurveyVersion int             `json:"survey_version"`
-	UserResponded map[string]bool `json:"user_responded"`
+	Type          string `json:"type"`
+	MeetingID     string `json:"meeting_id"`
+	SurveyID      string `json:"survey_id"`
+	SurveyVersion int    `json:"survey_version"`
 }
 
 func (m *MeetingMetadata) PreSave() *MeetingMetadata {
@@ -149,6 +149,36 @@ func DecodeMeetingMetadataFromByte(b []byte) *MeetingMetadata {
 		return nil
 	}
 	return &m
+}
+
+// UserMeetingMetadata stores the user metadata for a  meeting
+type UserMeetingMetadata struct {
+	Type         string `json:"type"`
+	UserID       string `json:"user_id"`
+	MeetingID    string `json:"meeting_id"`
+	SurveySentAt int64  `json:"survey_sent_at"`
+	RespondedAt  int64  `json:"responded_at"`
+}
+
+func (u *UserMeetingMetadata) PreSave() *UserMeetingMetadata {
+	u.Type = TypeUserMeetingMetadata
+	return u
+}
+
+// EncodeToByte returns a user meeting metadata as a byte array
+func (u *UserMeetingMetadata) EncodeToByte() []byte {
+	b, _ := json.Marshal(u)
+	return b
+}
+
+// DecodeUserMeetingMetadataFromByte tries to create a user meeting metadata from a byte array
+func DecodeUserMeetingMetadataFromByte(b []byte) *UserMeetingMetadata {
+	u := UserMeetingMetadata{}
+	err := json.Unmarshal(b, &u)
+	if err != nil {
+		return nil
+	}
+	return &u
 }
 
 // LatestSurveyInfo stores the latest version information for a survey
