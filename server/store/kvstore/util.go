@@ -35,6 +35,6 @@ func MeetingMetadataKey(meetingID string) string {
 }
 
 func UserMeetingMetadataKey(userID, meetingID string) string {
-	key := fmt.Sprintf("%s%s_%s", meetingMetadataKeyPrefix, userID, meetingID)
+	key := fmt.Sprintf("%s%s_%s", userMeetingMetadataKeyPrefix, userID, meetingID)
 	return util.GetKeyHash(key)
 }
