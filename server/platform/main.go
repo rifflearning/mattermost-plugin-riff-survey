@@ -76,6 +76,12 @@ func SaveLatestSurveyInfo(id string, version int) error {
 
 // SubmitSurveyResponse saves the survey response to the DB.
 func SubmitSurveyResponse(surveyPostID string, response *model.SurveyResponse) error {
+	userMeetingMetadata := GetUserMeetingMetadata(response.UserID, response.MeetingID)
+	if userMeetingMetadata == nil {
+		config.Mattermost.LogError("Received response but survey was not sent to the user.", "UserID", response.UserID, "MeetingID", response.MeetingID, "Response", string(response.EncodeToByte()))
+		return errors.New("unable to record user response: user not sent a survey for this meeting")
+	}
+
 	response = response.PreSave()
 	if err := config.Store.SaveSurveyResponse(response); err != nil {
 		config.Mattermost.LogError("Failed to save the survey response.", "Error", err.Error())
@@ -94,9 +100,35 @@ func SubmitSurveyResponse(surveyPostID string, response *model.SurveyResponse) e
 		return appErr
 	}
 
+	userMeetingMetadata.RespondedAt = response.CreatedAt
+	if err := SaveUserMeetingMetadata(userMeetingMetadata); err != nil {
+		return err
+	}
+
 	return nil
 }
 
+// GetSurveyInfoForMeeting is called to select the survey for a meeting
+func GetSurveyInfoForMeeting(meetingID string) (string, int, error) {
+	if meetingMetadata := GetMeetingMetadata(meetingID); meetingMetadata != nil {
+		return meetingMetadata.SurveyID, meetingMetadata.SurveyVersion, nil
+	}
+
+	// TODO: for v2, select surveyID based on some defined criteria
+	surveyID := config.HardcodedSurveyID
+	info := GetLatestSurveyInfo(surveyID)
+	if info == nil {
+		return "", 0, errors.New("survey does not exist")
+	}
+
+	if err := SaveMeetingMetadata(meetingID, info.SurveyID, info.SurveyVersion); err != nil {
+		return "", 0, err
+	}
+
+	return info.SurveyID, info.SurveyVersion, nil
+}
+
+// SendSurveyPost creates the survey post for a user who participated in a meeting
 func SendSurveyPost(userID, meetingID string) error {
 	conf := config.GetConfig()
 	channel, appErr := config.Mattermost.GetDirectChannel(conf.BotUserID, userID)
@@ -104,11 +136,10 @@ func SendSurveyPost(userID, meetingID string) error {
 		return errors.Wrap(appErr, "Unable to create DM Channel.")
 	}
 
-	// TODO: Get add meetingID to props instead of surveyID and get survey questions using meetingID
-	surveyID := config.HardcodedSurveyID
-	latestSurveyInfo := GetLatestSurveyInfo(surveyID)
-	if latestSurveyInfo == nil {
-		return errors.New("survey does not exist")
+	surveyID, surveyVersion, surveyInfoErr := GetSurveyInfoForMeeting(meetingID)
+	if surveyInfoErr != nil {
+		config.Mattermost.LogError("Failed to send survey to the user. Unable to get survey info for the meeting.", "UserID", userID, "MeetingID", meetingID, "Error", surveyInfoErr.Error())
+		return surveyInfoErr
 	}
 
 	post := &serverModel.Post{
@@ -121,12 +152,22 @@ func SendSurveyPost(userID, meetingID string) error {
 			"override_username": config.OverrideUsername,
 			"meeting_id":        meetingID,
 			"survey_id":         surveyID,
-			"survey_version":    latestSurveyInfo.SurveyVersion,
+			"survey_version":    surveyVersion,
 		},
 	}
 
-	if _, err := config.Mattermost.CreatePost(post); err != nil {
-		return errors.Wrap(err, "failed to create survey post for the channel: "+channel.Id)
+	post, createPostErr := config.Mattermost.CreatePost(post)
+	if createPostErr != nil {
+		return errors.Wrap(createPostErr, "failed to create survey post for the channel: "+channel.Id)
+	}
+
+	userMeetingMetadata := &model.UserMeetingMetadata{
+		MeetingID:    meetingID,
+		UserID:       userID,
+		SurveySentAt: post.CreateAt,
+	}
+	if err := SaveUserMeetingMetadata(userMeetingMetadata); err != nil {
+		return err
 	}
 
 	return nil
