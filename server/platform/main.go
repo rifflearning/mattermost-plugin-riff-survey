@@ -1,6 +1,8 @@
 package platform
 
 import (
+	"time"
+
 	serverModel "github.com/mattermost/mattermost-server/model"
 	"github.com/pkg/errors"
 
@@ -125,9 +127,34 @@ func SendSurveyPost(userID, meetingID string) error {
 		},
 	}
 
-	if _, err := config.Mattermost.CreatePost(post); err != nil {
-		return errors.Wrap(err, "failed to create survey post for the channel: "+channel.Id)
+	post, createPostErr := config.Mattermost.CreatePost(post)
+	if createPostErr != nil {
+		return errors.Wrap(createPostErr, "failed to create survey post for the channel: "+channel.Id)
 	}
+	go SendSurveyReminders(post.Id, channel.Id)
 
 	return nil
+}
+
+// SendSurveyReminders sends reminder posts to the user to fill the survey.
+func SendSurveyReminders(postID, channelID string) {
+	conf := config.GetConfig()
+	reminderPost := &serverModel.Post{
+		UserId:    conf.BotUserID,
+		ChannelId: channelID,
+		Message:   conf.ReminderText,
+		ParentId:  postID,
+		RootId:    postID,
+		Props: serverModel.StringInterface{
+			"from_webhook":      "true",
+			"override_username": config.OverrideUsername,
+		},
+	}
+
+	for i := 0; i < conf.ReminderCountInt; i++ {
+		time.Sleep(conf.ReminderIntervalDuration)
+		if _, err := config.Mattermost.CreatePost(reminderPost); err != nil {
+			config.Mattermost.LogError("Failed to create reminder post.", "PostID", postID, "ChannelID", channelID, "Error", err.Error())
+		}
+	}
 }

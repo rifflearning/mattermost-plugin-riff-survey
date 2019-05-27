@@ -30,6 +30,27 @@
         "type": "text",
         "default": "/pages/dashboard",
         "help_text": "Relative Path to the Riff Stats page."
+      },
+      {
+        "key": "ReminderText",
+        "display_name": "Reminder Text:",
+        "type": "text",
+        "default": "A gentle reminder to fill the survey.",
+        "help_text": "Enter the message to be sent to users who have not responded to a survey yet."
+      },
+      {
+        "key": "ReminderCount",
+        "display_name": "Reminder Count:",
+        "type": "text",
+        "default": "3",
+        "help_text": "The number of times to send the survey reminder to a user."
+      },
+      {
+        "key": "ReminderInterval",
+        "display_name": "Reminder Interval:",
+        "type": "text",
+        "default": "15",
+        "help_text": "Time in minutes to wait before sending a new reminder to a user."
       }
     ]
   }
