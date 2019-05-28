@@ -1,12 +1,13 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {Alert, Button, ButtonGroup, Modal} from 'react-bootstrap';
+import {Alert, Button, ButtonGroup, Clearfix, Modal} from 'react-bootstrap';
 
 import QuestionTypeOpen from '../question_type_open';
 import QuestionTypeLikertScale from '../question_type_likert_scale';
 
 import constants from '../../constants';
+import loadingGif from '../../../assets/load.gif';
 
 import './styles.css';
 
@@ -62,7 +63,7 @@ export default class SurveyModal extends React.PureComponent {
                 responses,
             });
         }
-    }
+    };
 
     handleClose = () => {
         this.props.close();
@@ -121,31 +122,25 @@ export default class SurveyModal extends React.PureComponent {
         });
     };
 
-    render() {
-        const {survey, loading, loadingSubmit, serverError} = this.state;
-        const loadingScreen = (
-            <div
-                className='loading-screen'
-                style={{position: 'relative'}}
-            >
-                <div className='loading__content'>
-                    <h3>
-                        {'Loading'}
-                    </h3>
-                    <div className='round round-1'/>
-                    <div className='round round-2'/>
-                    <div className='round round-3'/>
-                </div>
+    renderLoading = () => {
+        return (
+            <div className='survey-loading'>
+                <img src={loadingGif}/>
             </div>
         );
+    };
+
+    renderSurvey = () => {
+        const {survey, loadingSubmit, serverError} = this.state;
+
         const questions = this.renderQuestions();
-        const content = (
-            <React.Fragment>
+        return (
+            <div>
                 <p className='survey-banner-text'>
                     {survey.description}
                 </p>
                 {questions}
-                <div className='clearfix'>
+                <Clearfix>
                     <ButtonGroup className='float-right'>
                         <Button
                             type='button'
@@ -171,9 +166,12 @@ export default class SurveyModal extends React.PureComponent {
                             {'Submit'}
                         </Button>
                     </ButtonGroup>
-                </div>
+                </Clearfix>
                 {serverError && (
-                    <Alert bsStyle='warning'>
+                    <Alert
+                        bsStyle='warning'
+                        className='survey-server-error-alert'
+                    >
                         <i
                             className='fa fa-warning'
                             title='Server Error'
@@ -181,8 +179,27 @@ export default class SurveyModal extends React.PureComponent {
                         {' There was some error while submitting your response. Please try again later. If the problem persists, contact your System Administrator.'}
                     </Alert>
                 )}
-            </React.Fragment>
+            </div>
         );
+    };
+
+    renderGetSurveyError = () => {
+        return (
+            <div>
+                <i
+                    className='fa fa-warning'
+                    title='Server Error'
+                />
+                {' There was some error while fetching survey. Please try again later. If the problem persists, contact your System Administrator.'}
+            </div>
+        );
+    };
+
+    render() {
+        const {survey, loading, loadingSubmit, serverError} = this.state;
+
+        let content;
+        // TODO: Set the value of content
 
         return (
             <Modal
@@ -200,15 +217,7 @@ export default class SurveyModal extends React.PureComponent {
                     </Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    {loading && loadingScreen}
-                    <div>
-                        <i
-                            className='fa fa-warning'
-                            title='Server Error'
-                        />
-                        {' There was some error while fetching survey. Please try again later. If the problem persists, contact your System Administrator.'}
-                    </div>
-                    {!loading && content}
+                    {content}
                 </Modal.Body>
             </Modal>
         );
