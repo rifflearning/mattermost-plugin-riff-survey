@@ -144,7 +144,7 @@ export default class SurveyModal extends React.PureComponent {
                     <ButtonGroup className='float-right'>
                         <Button
                             type='button'
-                            bsStyle='secondary'
+                            bsStyle='info'
                             onClick={this.handleClose}
                             disabled={loadingSubmit}
                         >
