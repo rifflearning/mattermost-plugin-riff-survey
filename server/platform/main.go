@@ -191,7 +191,7 @@ func SendSurveyReminders(postID, channelID, userID, meetingID string) {
 		},
 	}
 
-	for i := 0; i < conf.ReminderCountInt; i++ {
+	for i := 0; i < conf.MaxReminderCountInt; i++ {
 		time.Sleep(conf.ReminderIntervalDuration)
 
 		userMeetingMetadata := GetUserMeetingMetadata(userID, meetingID)

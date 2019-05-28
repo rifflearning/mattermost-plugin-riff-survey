@@ -39,7 +39,7 @@
         "help_text": "Enter the message to be sent to users as a reminder for filling pending surveys."
       },
       {
-        "key": "ReminderCount",
+        "key": "MaxReminderCount",
         "display_name": "Max Reminder Count:",
         "type": "text",
         "default": "3",
@@ -50,7 +50,7 @@
         "display_name": "Reminder Interval:",
         "type": "text",
         "default": "15",
-        "help_text": "Time in minutes to wait before sending a new reminder to a user."
+        "help_text": "Time in minutes after which a new reminder is sent to a user."
       }
     ]
   }

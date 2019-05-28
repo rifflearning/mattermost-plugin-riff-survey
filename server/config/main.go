@@ -42,13 +42,13 @@ type Configuration struct {
 	Survey           string `json:"Survey"`
 	DashboardPath    string `json:"DashboardPath"`
 	ReminderText     string `json:"ReminderText"`
-	ReminderCount    string `json:"ReminderCount"`
+	MaxReminderCount string `json:"MaxReminderCount"`
 	ReminderInterval string `json:"ReminderInterval"`
 
 	// Derived Attributes
 	BotUserID                string
 	ParsedSurvey             *model.Survey
-	ReminderCountInt         int
+	MaxReminderCountInt      int
 	ReminderIntervalDuration time.Duration
 }
 
@@ -78,12 +78,12 @@ func (c *Configuration) ProcessConfiguration() error {
 	// Process ReminderText
 	c.ReminderText = strings.TrimSpace(c.ReminderText)
 
-	// Derive ReminderCountInt
-	reminderCountInt, conversionErr := strconv.Atoi(c.ReminderCount)
+	// Derive MaxReminderCountInt
+	maxReminderCountInt, conversionErr := strconv.Atoi(c.MaxReminderCount)
 	if conversionErr != nil {
-		return errors.Wrap(conversionErr, "ReminderCount is not a valid number")
+		return errors.Wrap(conversionErr, "MaxReminderCount is not a valid number")
 	}
-	c.ReminderCountInt = reminderCountInt
+	c.MaxReminderCountInt = maxReminderCountInt
 
 	// Derive ReminderIntervalInt
 	reminderIntervalInt, conversionErr := strconv.Atoi(c.ReminderInterval)
@@ -108,9 +108,13 @@ func (c *Configuration) IsValid() error {
 		return errors.New("Reminder text cannot be empty")
 	}
 
-	// ReminderCountInt should not be a negative number
-	// ReminderIntervalDuration should not be negative
-	// ReminderIntervalDuration is 0
+	if c.MaxReminderCountInt < 0 {
+		return errors.New("Max reminder count cannot negative")
+	}
+
+	if c.ReminderIntervalDuration <= 0 {
+		return errors.New("Reminder interval must be greater than zero")
+	}
 
 	return nil
 }
