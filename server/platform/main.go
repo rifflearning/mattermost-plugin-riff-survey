@@ -162,7 +162,7 @@ func SendSurveyPost(userID, meetingID string) error {
 	if createPostErr != nil {
 		return errors.Wrap(createPostErr, "failed to create survey post for the channel: "+channel.Id)
 	}
-	go SendSurveyReminders(post.Id, channel.Id)
+	go SendSurveyReminders(post.Id, channel.Id, userID, meetingID)
 
 	userMeetingMetadata := &model.UserMeetingMetadata{
 		MeetingID:    meetingID,
@@ -177,7 +177,7 @@ func SendSurveyPost(userID, meetingID string) error {
 }
 
 // SendSurveyReminders sends reminder posts to the user to fill the survey.
-func SendSurveyReminders(postID, channelID string) {
+func SendSurveyReminders(postID, channelID, userID, meetingID string) {
 	conf := config.GetConfig()
 	reminderPost := &serverModel.Post{
 		UserId:    conf.BotUserID,
@@ -193,6 +193,13 @@ func SendSurveyReminders(postID, channelID string) {
 
 	for i := 0; i < conf.ReminderCountInt; i++ {
 		time.Sleep(conf.ReminderIntervalDuration)
+
+		userMeetingMetadata := GetUserMeetingMetadata(userID, meetingID)
+		userHasResponded := userMeetingMetadata != nil && userMeetingMetadata.RespondedAt != 0
+		if userHasResponded {
+			return
+		}
+
 		if _, err := config.Mattermost.CreatePost(reminderPost); err != nil {
 			config.Mattermost.LogError("Failed to create reminder post.", "PostID", postID, "ChannelID", channelID, "Error", err.Error())
 		}

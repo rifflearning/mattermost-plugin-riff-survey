@@ -36,14 +36,14 @@
         "display_name": "Reminder Text:",
         "type": "text",
         "default": "A gentle reminder to fill the survey.",
-        "help_text": "Enter the message to be sent to users who have not responded to a survey yet."
+        "help_text": "Enter the message to be sent to users as a reminder for filling pending surveys."
       },
       {
         "key": "ReminderCount",
-        "display_name": "Reminder Count:",
+        "display_name": "Max Reminder Count:",
         "type": "text",
         "default": "3",
-        "help_text": "The number of times to send the survey reminder to a user."
+        "help_text": "The maximum number of times a survey reminder can be sent to a user."
       },
       {
         "key": "ReminderInterval",

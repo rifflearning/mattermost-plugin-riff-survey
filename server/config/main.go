@@ -108,5 +108,9 @@ func (c *Configuration) IsValid() error {
 		return errors.New("Reminder text cannot be empty")
 	}
 
+	// ReminderCountInt should not be a negative number
+	// ReminderIntervalDuration should not be negative
+	// ReminderIntervalDuration is 0
+
 	return nil
 }
