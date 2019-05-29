@@ -9,6 +9,7 @@ import (
 	"github.com/Brightscout/mattermost-plugin-survey/server/config"
 	"github.com/Brightscout/mattermost-plugin-survey/server/controller"
 	"github.com/Brightscout/mattermost-plugin-survey/server/platform"
+	"github.com/Brightscout/mattermost-plugin-survey/server/platform/reminders"
 	"github.com/Brightscout/mattermost-plugin-survey/server/store/kvstore"
 )
 
@@ -19,11 +20,17 @@ type Plugin struct {
 func (p *Plugin) OnActivate() error {
 	config.Mattermost = p.API
 	config.Store = kvstore.NewStore()
+	reminders.InitReminders()
 
 	if err := p.OnConfigurationChange(); err != nil {
 		return err
 	}
 
+	return nil
+}
+
+func (p *Plugin) OnDeactivate() error {
+	reminders.StopReminders()
 	return nil
 }
 

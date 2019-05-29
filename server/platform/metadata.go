@@ -5,6 +5,8 @@ import (
 	"github.com/Brightscout/mattermost-plugin-survey/server/model"
 )
 
+// TODO: Remove this file and update all usages
+
 // GetMeetingMetadata returns the survey metadata for a meeting with a given meetingID.
 // Returns the meetingMetadata if found and nil if not.
 func GetMeetingMetadata(meetingID string) *model.MeetingMetadata {
@@ -36,7 +38,7 @@ func SaveMeetingMetadata(meetingID, surveyID string, surveyVersion int) error {
 func GetUserMeetingMetadata(userID, meetingID string) *model.UserMeetingMetadata {
 	userMeetingMetadata, err := config.Store.GetUserMeetingMetadata(userID, meetingID)
 	if err != nil {
-		config.Mattermost.LogError("Unable to get meeting metadata.", "UserID", userID, "MeetingID", meetingID, "Error", err.Error())
+		config.Mattermost.LogError("Unable to get user meeting metadata.", "UserID", userID, "MeetingID", meetingID, "Error", err.Error())
 		return nil
 	}
 	return userMeetingMetadata

@@ -96,3 +96,40 @@ func (s *KVStore) SaveSurveyResponse(response *model.SurveyResponse) error {
 	}
 	return nil
 }
+
+func (s *KVStore) GetReminderMetadata(postID string) (*model.ReminderMetadata, error) {
+	key := ReminderMetadataKey(postID)
+	b, err := config.Mattermost.KVGet(key)
+	if err != nil {
+		return nil, err
+	}
+	r := model.DecodeReminderMetadataFromByte(b)
+	return r, nil
+}
+
+func (s *KVStore) SaveReminderMetadata(data *model.ReminderMetadata) error {
+	key := ReminderMetadataKey(data.PostID)
+	if err := config.Mattermost.KVSet(key, data.EncodeToByte()); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (s *KVStore) GetRemindersList() ([]string, error) {
+	key := RemindersListKey
+	b, err := config.Mattermost.KVGet(key)
+	if err != nil {
+		return nil, err
+	}
+	list := model.DecodeStringArrayFromByte(b)
+	return list, nil
+}
+
+func (s *KVStore) SaveRemindersList(list []string) error {
+	key := RemindersListKey
+	b := model.GetBytes(list)
+	if err := config.Mattermost.KVSet(key, b); err != nil {
+		return err
+	}
+	return nil
+}

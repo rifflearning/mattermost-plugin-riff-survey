@@ -6,6 +6,7 @@ import (
 
 	"github.com/Brightscout/mattermost-plugin-survey/server/config"
 	"github.com/Brightscout/mattermost-plugin-survey/server/model"
+	"github.com/Brightscout/mattermost-plugin-survey/server/platform/reminders"
 )
 
 // GetSurvey returns the survey with a given id and version.
@@ -170,6 +171,7 @@ func SendSurveyPost(userID, meetingID string) error {
 	if createPostErr != nil {
 		return errors.Wrap(createPostErr, "failed to create survey post for the channel: "+channel.Id)
 	}
+	go reminders.AddNew(post.Id, channel.Id, userID, meetingID, post.CreateAt)
 
 	userMeetingMetadata := &model.UserMeetingMetadata{
 		MeetingID:    meetingID,
