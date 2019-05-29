@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/mattermost/mattermost-server/plugin"
 
@@ -14,6 +15,28 @@ import (
 
 type Plugin struct {
 	plugin.MattermostPlugin
+
+	running bool
+}
+
+func (p *Plugin) Run() {
+	if !p.running {
+		p.running = true
+		p.runner()
+	}
+}
+
+func (p *Plugin) runner() {
+	go func() {
+
+		<-time.NewTimer(config.GetConfig().ReminderIntervalDuration).C
+
+		// TODO: Send survey reminders
+		if !p.running {
+			return
+		}
+		p.runner()
+	}()
 }
 
 func (p *Plugin) OnActivate() error {
@@ -23,6 +46,8 @@ func (p *Plugin) OnActivate() error {
 	if err := p.OnConfigurationChange(); err != nil {
 		return err
 	}
+
+	// TODO initTimer()
 
 	return nil
 }

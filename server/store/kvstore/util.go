@@ -11,7 +11,10 @@ const (
 	surveyKeyPrefix              = "survey_"
 	surveyResponseKeyPrefix      = "survey_response_"
 	meetingMetadataKeyPrefix     = "meeting_metadata_"
+	reminderMetadataKeyPrefix    = "reminder_metadata_"
 	userMeetingMetadataKeyPrefix = "user_meeting_metadata_"
+
+	RemindersListKey = "reminders_list"
 )
 
 func LatestSurveyKey(surveyID string) string {
@@ -31,6 +34,11 @@ func SurveyResponseKey(userID, meetingID, surveyID, surveyVersion string) string
 
 func MeetingMetadataKey(meetingID string) string {
 	key := fmt.Sprintf("%s%s", meetingMetadataKeyPrefix, meetingID)
+	return util.GetKeyHash(key)
+}
+
+func ReminderMetadataKey(postID string) string {
+	key := fmt.Sprintf("%s%s", reminderMetadataKeyPrefix, postID)
 	return util.GetKeyHash(key)
 }
 
