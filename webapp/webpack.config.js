@@ -6,6 +6,7 @@ module.exports = {
     ],
     resolve: {
         modules: [
+            'assets',
             'src',
             'node_modules',
         ],
