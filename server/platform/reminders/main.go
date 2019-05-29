@@ -27,6 +27,8 @@ func InitReminders() {
 
 func StopReminders() {
 	doneChannel <- true
+	close(addReminderChannel)
+	close(doneChannel)
 	ticker.Stop()
 }
 
@@ -45,7 +47,7 @@ func HandleReminders() {
 	}
 }
 
-func sendReminderNotifications(currentTime time.Time) {
+func sendReminderNotifications(currentTickerTime time.Time) {
 	conf := config.GetConfig()
 	remindersList, err := config.Store.GetRemindersList()
 	if err != nil {
@@ -70,7 +72,7 @@ func sendReminderNotifications(currentTime time.Time) {
 			continue
 		}
 
-		if reminderMetadata.TotalRemindersSent > conf.MaxReminderCountInt {
+		if reminderMetadata.TotalRemindersSent >= conf.MaxReminderCountInt {
 			config.Mattermost.LogInfo("Max reminders sent for post.", "SurveyPostID", surveyPostID, "ReminderMetadata", string(reminderMetadata.EncodeToByte()))
 			continue
 		}
@@ -87,23 +89,20 @@ func sendReminderNotifications(currentTime time.Time) {
 			continue
 		}
 
-		shouldSendFirstReminder := reminderMetadata.TotalRemindersSent == 0 && currentTime.After(serverUtils.TimeFromMillis(reminderMetadata.SurveySentAt).Add(conf.ReminderIntervalDuration))
-		shouldSendSubsequentReminder := currentTime.After(serverUtils.TimeFromMillis(reminderMetadata.PreviousReminderSentAt).Add(conf.ReminderIntervalDuration))
-		shouldSendReminder := shouldSendFirstReminder || shouldSendSubsequentReminder
-
-		if shouldSendReminder {
+		if shouldSendReminder(reminderMetadata, currentTickerTime) {
 			reminderPost.ChannelId = reminderMetadata.ChannelID
 			reminderPost.ParentId = surveyPostID
 			reminderPost.RootId = surveyPostID
 
-			post, err := config.Mattermost.CreatePost(reminderPost)
-			if err != nil {
+			if _, err := config.Mattermost.CreatePost(reminderPost); err != nil {
 				config.Mattermost.LogError("Failed to create reminder post.", "SurveyPostID", surveyPostID, "Error", err.Error())
 				continue
 			}
 
+			// Note: This is set to tickerTime to correctly send subsequent reminders with subsequent ticks
+			reminderMetadata.PreviousReminderSentAt = serverUtils.MillisFromTime(currentTickerTime)
+
 			reminderMetadata.TotalRemindersSent = reminderMetadata.TotalRemindersSent + 1
-			reminderMetadata.PreviousReminderSentAt = post.CreateAt
 			if err := config.Store.SaveReminderMetadata(reminderMetadata); err != nil {
 				config.Mattermost.LogError("Failed to save reminder metadata.", "Error", err.Error())
 				continue
@@ -119,6 +118,18 @@ func sendReminderNotifications(currentTime time.Time) {
 		config.Mattermost.LogError("Failed to update reminders list.", "OldRemindersList", string(model.StringArrayToByte(remindersList)), "NewRemindersList", string(model.StringArrayToByte(newRemindersList)), "Error", err.Error())
 		return
 	}
+}
+
+func shouldSendReminder(reminderMetadata *model.ReminderMetadata, currentTickerTime time.Time) bool {
+	conf := config.GetConfig()
+
+	firstReminderDueAt := serverUtils.TimeFromMillis(reminderMetadata.SurveySentAt).Add(conf.ReminderIntervalDuration)
+	shouldSendFirstReminder := reminderMetadata.TotalRemindersSent == 0 && (currentTickerTime.After(firstReminderDueAt) || currentTickerTime.Equal(firstReminderDueAt))
+
+	subsequentReminderDueAt := serverUtils.TimeFromMillis(reminderMetadata.PreviousReminderSentAt).Add(conf.ReminderIntervalDuration)
+	shouldSendSubsequentReminder := reminderMetadata.TotalRemindersSent > 0 && (currentTickerTime.After(subsequentReminderDueAt) || currentTickerTime.Equal(subsequentReminderDueAt))
+
+	return shouldSendFirstReminder || shouldSendSubsequentReminder
 }
 
 func addReminder(postID string) {
