@@ -3,52 +3,34 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"time"
 
 	"github.com/mattermost/mattermost-server/plugin"
 
 	"github.com/Brightscout/mattermost-plugin-survey/server/config"
 	"github.com/Brightscout/mattermost-plugin-survey/server/controller"
 	"github.com/Brightscout/mattermost-plugin-survey/server/platform"
+	"github.com/Brightscout/mattermost-plugin-survey/server/platform/reminders"
 	"github.com/Brightscout/mattermost-plugin-survey/server/store/kvstore"
 )
 
 type Plugin struct {
 	plugin.MattermostPlugin
-
-	running bool
-}
-
-func (p *Plugin) Run() {
-	if !p.running {
-		p.running = true
-		p.runner()
-	}
-}
-
-func (p *Plugin) runner() {
-	go func() {
-
-		<-time.NewTimer(config.GetConfig().ReminderIntervalDuration).C
-
-		// TODO: Send survey reminders
-		if !p.running {
-			return
-		}
-		p.runner()
-	}()
 }
 
 func (p *Plugin) OnActivate() error {
 	config.Mattermost = p.API
 	config.Store = kvstore.NewStore()
+	reminders.InitReminders()
 
 	if err := p.OnConfigurationChange(); err != nil {
 		return err
 	}
 
-	// TODO initTimer()
+	return nil
+}
 
+func (p *Plugin) OnDeactivate() error {
+	reminders.StopReminders()
 	return nil
 }
 

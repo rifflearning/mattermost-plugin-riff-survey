@@ -1,4 +1,4 @@
-package platform
+package util
 
 import (
 	"github.com/Brightscout/mattermost-plugin-survey/server/config"
