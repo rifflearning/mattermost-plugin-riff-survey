@@ -3,8 +3,6 @@ package reminders
 import (
 	"time"
 
-	"github.com/Brightscout/mattermost-plugin-survey/server/platform"
-
 	serverModel "github.com/mattermost/mattermost-server/model"
 	serverUtils "github.com/mattermost/mattermost-server/utils"
 
@@ -77,7 +75,12 @@ func sendReminderNotifications(currentTime time.Time) {
 			continue
 		}
 
-		userMeetingMetadata := platform.GetUserMeetingMetadata(reminderMetadata.UserID, reminderMetadata.MeetingID)
+		userMeetingMetadata, err := config.Store.GetUserMeetingMetadata(reminderMetadata.UserID, reminderMetadata.MeetingID)
+		if err != nil {
+			config.Mattermost.LogError("Unable to get user meeting metadata.", "UserID", reminderMetadata.UserID, "MeetingID", reminderMetadata.MeetingID, "Error", err.Error())
+			continue
+		}
+
 		userHasResponded := userMeetingMetadata != nil && userMeetingMetadata.RespondedAt != 0
 		if userHasResponded {
 			config.Mattermost.LogInfo("User has already responded to the survey. Reminder not sent.", "PostID", surveyPostID, "ReminderMetadata", string(reminderMetadata.EncodeToByte()))
