@@ -15,8 +15,7 @@ var (
 	addReminderChannel chan string
 	doneChannel        chan bool
 
-	running bool
-	ticker  *time.Ticker
+	ticker *time.Ticker
 )
 
 func InitReminders() {
