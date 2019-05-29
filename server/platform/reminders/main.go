@@ -21,7 +21,7 @@ var (
 func InitReminders() {
 	addReminderChannel = make(chan string)
 	doneChannel = make(chan bool)
-	ticker = time.NewTicker(time.Minute)
+	ticker = time.NewTicker(config.ReminderTickerDuration)
 
 	go HandleReminders()
 }
@@ -83,8 +83,8 @@ func sendReminderNotifications(currentTime time.Time) {
 			continue
 		}
 
-		shouldSendFirstReminder := reminderMetadata.TotalRemindersSent == 0 && !currentTime.Before(serverUtils.TimeFromMillis(reminderMetadata.SurveySentAt).Add(conf.ReminderIntervalDuration))
-		shouldSendSubsequentReminder := !currentTime.Before(serverUtils.TimeFromMillis(reminderMetadata.PreviousReminderSentAt).Add(conf.ReminderIntervalDuration))
+		shouldSendFirstReminder := reminderMetadata.TotalRemindersSent == 0 && currentTime.After(serverUtils.TimeFromMillis(reminderMetadata.SurveySentAt).Add(conf.ReminderIntervalDuration))
+		shouldSendSubsequentReminder := currentTime.After(serverUtils.TimeFromMillis(reminderMetadata.PreviousReminderSentAt).Add(conf.ReminderIntervalDuration))
 		shouldSendReminder := shouldSendFirstReminder || shouldSendSubsequentReminder
 
 		if shouldSendReminder {
@@ -142,6 +142,7 @@ func AddNew(postID, channelID, userID, meetingID string, surveySentAt int64) {
 		TotalRemindersSent:     0,
 	}
 
+	reminderMetadata.PreSave()
 	if err := config.Store.SaveReminderMetadata(reminderMetadata); err != nil {
 		config.Mattermost.LogError("Failed to save reminder metadata.", "Error", err.Error())
 		return

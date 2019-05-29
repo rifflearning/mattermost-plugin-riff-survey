@@ -5,6 +5,8 @@ import (
 	"github.com/Brightscout/mattermost-plugin-survey/server/model"
 )
 
+// TODO: Remove this file and update all usages
+
 // GetMeetingMetadata returns the survey metadata for a meeting with a given meetingID.
 // Returns the meetingMetadata if found and nil if not.
 func GetMeetingMetadata(meetingID string) *model.MeetingMetadata {
