@@ -1,6 +1,10 @@
 package model
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
+
+// TODO: Check if these methods can be generic
 
 // StringArrayToByte returns a string array as a byte array
 func StringArrayToByte(s []string) []byte {
