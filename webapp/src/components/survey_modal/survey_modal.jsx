@@ -51,6 +51,8 @@ export default class SurveyModal extends React.PureComponent {
         const {surveyPostProps, getSurvey} = this.props;
         this.setState({
             loading: true,
+            getSurveyError: false,
+            submitResponseError: false,
         });
 
         // TODO: Get survey using meetingID instead
@@ -69,6 +71,7 @@ export default class SurveyModal extends React.PureComponent {
             });
         } else {
             this.setState({
+                loading: false,
                 getSurveyError: true,
             });
         }
@@ -220,6 +223,7 @@ export default class SurveyModal extends React.PureComponent {
             <Modal.Footer>
                 <Button
                     type='button'
+                    bsStyle='secondary'
                     onClick={this.handleClose}
                 >
                     {'Cancel'}
