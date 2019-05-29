@@ -35,8 +35,9 @@ export default class SurveyModal extends React.PureComponent {
             responses: {
             },
             loading: false,
-            loadingSubmit: true,
-            serverError: false,
+            loadingSubmit: false,
+            getSurveyError: false,
+            submitResponseError: false,
         };
     }
 
@@ -48,6 +49,9 @@ export default class SurveyModal extends React.PureComponent {
 
     getSurvey = async () => {
         const {surveyPostProps, getSurvey} = this.props;
+        this.setState({
+            loading: true,
+        });
 
         // TODO: Get survey using meetingID instead
         const {data} = await getSurvey(surveyPostProps.survey_id, surveyPostProps.survey_version);
@@ -61,6 +65,11 @@ export default class SurveyModal extends React.PureComponent {
             this.setState({
                 survey,
                 responses,
+                loading: false,
+            });
+        } else {
+            this.setState({
+                getSurveyError: true,
             });
         }
     };
@@ -69,12 +78,22 @@ export default class SurveyModal extends React.PureComponent {
         this.props.close();
     };
 
-    handleSubmit = () => {
+    handleSubmit = async () => {
         const {survey, responses} = this.state;
         const {surveyPostProps, surveyPostID} = this.props;
         const meetingID = surveyPostProps.meeting_id;
-        this.props.submitSurveyResponses(surveyPostID, meetingID, survey.id, survey.version, responses);
-        this.handleClose();
+
+        this.setState({
+            submitResponseError: false,
+        });
+        const {data} = await this.props.submitSurveyResponses(surveyPostID, meetingID, survey.id, survey.version, responses);
+        if (data) {
+            this.handleClose();
+        } else {
+            this.setState({
+                submitResponseError: true,
+            });
+        }
     };
 
     handleUpdateQuestionResponse = (questionID, response) => {
@@ -82,6 +101,7 @@ export default class SurveyModal extends React.PureComponent {
             const responses = {...prevState.responses};
             responses[questionID] = response;
             return {
+                submitResponseError: false,
                 responses,
             };
         });
@@ -131,7 +151,7 @@ export default class SurveyModal extends React.PureComponent {
     };
 
     renderSurvey = () => {
-        const {survey, loadingSubmit, serverError} = this.state;
+        const {survey, loadingSubmit, submitResponseError} = this.state;
 
         const questions = this.renderQuestions();
         return (
@@ -144,7 +164,7 @@ export default class SurveyModal extends React.PureComponent {
                     <ButtonGroup className='float-right'>
                         <Button
                             type='button'
-                            bsStyle='info'
+                            bsStyle='secondary'
                             onClick={this.handleClose}
                             disabled={loadingSubmit}
                         >
@@ -167,7 +187,7 @@ export default class SurveyModal extends React.PureComponent {
                         </Button>
                     </ButtonGroup>
                 </Clearfix>
-                {serverError && (
+                {submitResponseError && (
                     <Alert
                         bsStyle='warning'
                         className='survey-server-error-alert'
@@ -195,11 +215,33 @@ export default class SurveyModal extends React.PureComponent {
         );
     };
 
+    renderCancelFooter = () => {
+        return (
+            <Modal.Footer>
+                <Button
+                    type='button'
+                    onClick={this.handleClose}
+                >
+                    {'Cancel'}
+                </Button>
+            </Modal.Footer>
+        );
+    };
+
     render() {
-        const {survey, loading, loadingSubmit, serverError} = this.state;
+        const {survey, loading, getSurveyError} = this.state;
 
         let content;
-        // TODO: Set the value of content
+        let cancelFooter;
+
+        if (loading) {
+            content = this.renderLoading();
+        } else if (getSurveyError) {
+            content = this.renderGetSurveyError();
+            cancelFooter = this.renderCancelFooter();
+        } else {
+            content = this.renderSurvey();
+        }
 
         return (
             <Modal
@@ -219,6 +261,7 @@ export default class SurveyModal extends React.PureComponent {
                 <Modal.Body>
                     {content}
                 </Modal.Body>
+                {cancelFooter}
             </Modal>
         );
     }
