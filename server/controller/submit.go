@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
+	serverModel "github.com/mattermost/mattermost-server/model"
 	"github.com/pkg/errors"
 
 	"github.com/Brightscout/mattermost-plugin-survey/server/config"
@@ -35,7 +36,8 @@ func executeSubmitSurveyResponse(w http.ResponseWriter, r *http.Request) error {
 		return err
 	}
 
-	if _, err := w.Write([]byte("ok")); err != nil {
+	w.Header().Set("Content-Type", "application/json")
+	if _, err := w.Write([]byte(serverModel.MapToJson(map[string]string{"status": "ok"}))); err != nil {
 		return errors.Wrap(err, "failed to write data to HTTP response")
 	}
 

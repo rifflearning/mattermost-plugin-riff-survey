@@ -78,9 +78,14 @@ func SaveLatestSurveyInfo(id string, version int) error {
 // SubmitSurveyResponse saves the survey response to the DB.
 func SubmitSurveyResponse(surveyPostID string, response *model.SurveyResponse) error {
 	userMeetingMetadata := GetUserMeetingMetadata(response.UserID, response.MeetingID)
-	if userMeetingMetadata == nil {
+	if userMeetingMetadata == nil || userMeetingMetadata.SurveySentAt == 0 {
 		config.Mattermost.LogError("Received response but survey was not sent to the user.", "UserID", response.UserID, "MeetingID", response.MeetingID, "Response", string(response.EncodeToByte()))
 		return errors.New("unable to record user response: user not sent a survey for this meeting")
+	}
+
+	if userMeetingMetadata.RespondedAt != 0 {
+		config.Mattermost.LogError("User has already responded to this survey. New response not recorded.", "UserID", response.UserID, "MeetingID", response.MeetingID, "Response", string(response.EncodeToByte()))
+		return errors.New("unable to record user response: response already exists")
 	}
 
 	response = response.PreSave()
@@ -129,8 +134,13 @@ func GetSurveyInfoForMeeting(meetingID string) (string, int, error) {
 	return info.SurveyID, info.SurveyVersion, nil
 }
 
-// SendSurveyPost creates the survey post for a user who participated in a meeting
+// SendSurveyPost creates the survey post for a user who participated in a meeting.
 func SendSurveyPost(userID, meetingID string) error {
+	if userMeetingMetadata := GetUserMeetingMetadata(userID, meetingID); userMeetingMetadata != nil && userMeetingMetadata.SurveySentAt != 0 {
+		config.Mattermost.LogInfo("Survey already sent to the user. New survey post not created.", "UserID", userID, "MeetingID", meetingID)
+		return nil
+	}
+
 	conf := config.GetConfig()
 	channel, appErr := config.Mattermost.GetDirectChannel(conf.BotUserID, userID)
 	if appErr != nil {
