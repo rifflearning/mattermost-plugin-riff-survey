@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 )
 
-// TODO: Check if these methods can be generic
+//TODO: Check if we can use GetBytes for storing other models in DB
 
-// StringArrayToByte returns a string array as a byte array
-func StringArrayToByte(s []string) []byte {
+// GetBytes returns an interface as a byte array
+func GetBytes(s interface{}) []byte {
 	b, _ := json.Marshal(s)
 	return b
 }

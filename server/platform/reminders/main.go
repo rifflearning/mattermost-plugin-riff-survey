@@ -115,7 +115,7 @@ func sendReminderNotifications(currentTickerTime time.Time) {
 	}
 
 	if err := config.Store.SaveRemindersList(newRemindersList); err != nil {
-		config.Mattermost.LogError("Failed to update reminders list.", "OldRemindersList", string(model.StringArrayToByte(remindersList)), "NewRemindersList", string(model.StringArrayToByte(newRemindersList)), "Error", err.Error())
+		config.Mattermost.LogError("Failed to update reminders list.", "OldRemindersList", string(model.GetBytes(remindersList)), "NewRemindersList", string(model.GetBytes(newRemindersList)), "Error", err.Error())
 		return
 	}
 }

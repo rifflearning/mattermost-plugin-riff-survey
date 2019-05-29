@@ -127,7 +127,7 @@ func (s *KVStore) GetRemindersList() ([]string, error) {
 
 func (s *KVStore) SaveRemindersList(list []string) error {
 	key := RemindersListKey
-	b := model.StringArrayToByte(list)
+	b := model.GetBytes(list)
 	if err := config.Mattermost.KVSet(key, b); err != nil {
 		return err
 	}
