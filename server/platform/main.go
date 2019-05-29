@@ -7,7 +7,6 @@ import (
 	"github.com/Brightscout/mattermost-plugin-survey/server/config"
 	"github.com/Brightscout/mattermost-plugin-survey/server/model"
 	"github.com/Brightscout/mattermost-plugin-survey/server/platform/reminders"
-	"github.com/Brightscout/mattermost-plugin-survey/server/util"
 )
 
 // GetSurvey returns the survey with a given id and version.
@@ -78,7 +77,7 @@ func SaveLatestSurveyInfo(id string, version int) error {
 
 // SubmitSurveyResponse saves the survey response to the DB.
 func SubmitSurveyResponse(surveyPostID string, response *model.SurveyResponse) error {
-	userMeetingMetadata := util.GetUserMeetingMetadata(response.UserID, response.MeetingID)
+	userMeetingMetadata := GetUserMeetingMetadata(response.UserID, response.MeetingID)
 	if userMeetingMetadata == nil {
 		config.Mattermost.LogError("Received response but survey was not sent to the user.", "UserID", response.UserID, "MeetingID", response.MeetingID, "Response", string(response.EncodeToByte()))
 		return errors.New("unable to record user response: user not sent a survey for this meeting")
@@ -103,7 +102,7 @@ func SubmitSurveyResponse(surveyPostID string, response *model.SurveyResponse) e
 	}
 
 	userMeetingMetadata.RespondedAt = response.CreatedAt
-	if err := util.SaveUserMeetingMetadata(userMeetingMetadata); err != nil {
+	if err := SaveUserMeetingMetadata(userMeetingMetadata); err != nil {
 		return err
 	}
 
@@ -112,7 +111,7 @@ func SubmitSurveyResponse(surveyPostID string, response *model.SurveyResponse) e
 
 // GetSurveyInfoForMeeting is called to select the survey for a meeting
 func GetSurveyInfoForMeeting(meetingID string) (string, int, error) {
-	if meetingMetadata := util.GetMeetingMetadata(meetingID); meetingMetadata != nil {
+	if meetingMetadata := GetMeetingMetadata(meetingID); meetingMetadata != nil {
 		return meetingMetadata.SurveyID, meetingMetadata.SurveyVersion, nil
 	}
 
@@ -123,7 +122,7 @@ func GetSurveyInfoForMeeting(meetingID string) (string, int, error) {
 		return "", 0, errors.New("survey does not exist")
 	}
 
-	if err := util.SaveMeetingMetadata(meetingID, info.SurveyID, info.SurveyVersion); err != nil {
+	if err := SaveMeetingMetadata(meetingID, info.SurveyID, info.SurveyVersion); err != nil {
 		return "", 0, err
 	}
 
@@ -169,7 +168,7 @@ func SendSurveyPost(userID, meetingID string) error {
 		UserID:       userID,
 		SurveySentAt: post.CreateAt,
 	}
-	if err := util.SaveUserMeetingMetadata(userMeetingMetadata); err != nil {
+	if err := SaveUserMeetingMetadata(userMeetingMetadata); err != nil {
 		return err
 	}
 
