@@ -16,7 +16,6 @@ import (
 
 const (
 	CommandPrefix             = PluginName
-	URLMappingKeyPrefix       = "url_"
 	ServerExeToWebappRootPath = "/../webapp"
 
 	URLPluginBase = "/plugins/" + PluginName
@@ -25,6 +24,7 @@ const (
 	HeaderMattermostUserID = "Mattermost-User-Id"
 
 	OverrideUsername = "Riff Bot"
+	OverrideIconURL  = URLStaticBase + "/logo.png"
 
 	HardcodedSurveyID = "f298903f8a80054ba09e342d0d9780635d3675a2"
 

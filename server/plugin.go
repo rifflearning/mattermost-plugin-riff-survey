@@ -3,8 +3,11 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/mattermost/mattermost-server/plugin"
+	"github.com/pkg/errors"
 
 	"github.com/Brightscout/mattermost-plugin-survey/server/config"
 	"github.com/Brightscout/mattermost-plugin-survey/server/controller"
@@ -15,12 +18,19 @@ import (
 
 type Plugin struct {
 	plugin.MattermostPlugin
+
+	handler http.Handler
 }
 
 func (p *Plugin) OnActivate() error {
 	config.Mattermost = p.API
 	config.Store = kvstore.NewStore()
 	reminders.InitReminders()
+
+	if err := p.setupStaticFileServer(); err != nil {
+		config.Mattermost.LogError("Unable to setup static file server.", "Error", err.Error())
+		return err
+	}
 
 	if err := p.OnConfigurationChange(); err != nil {
 		return err
@@ -79,6 +89,15 @@ func initSurvey() error {
 	return nil
 }
 
+func (p *Plugin) setupStaticFileServer() error {
+	exe, err := os.Executable()
+	if err != nil {
+		return errors.Wrap(err, "couldn't find the plugin executable path")
+	}
+	p.handler = http.FileServer(http.Dir(filepath.Dir(exe) + config.ServerExeToWebappRootPath))
+	return nil
+}
+
 func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Request) {
 	conf := config.GetConfig()
 
@@ -90,6 +109,7 @@ func (p *Plugin) ServeHTTP(c *plugin.Context, w http.ResponseWriter, r *http.Req
 
 	endpoint := controller.GetEndpoint(r)
 	if endpoint == nil {
+		p.handler.ServeHTTP(w, r)
 		return
 	}
 

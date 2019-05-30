@@ -62,6 +62,7 @@ func sendReminderNotifications(currentTickerTime time.Time) {
 		Props: serverModel.StringInterface{
 			"from_webhook":      "true",
 			"override_username": config.OverrideUsername,
+			"override_icon_url": config.OverrideIconURL,
 		},
 	}
 
