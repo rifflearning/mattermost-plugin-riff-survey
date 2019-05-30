@@ -161,6 +161,7 @@ func SendSurveyPost(userID, meetingID string) error {
 		Props: serverModel.StringInterface{
 			"from_webhook":      "true",
 			"override_username": config.OverrideUsername,
+			"override_icon_url": config.OverrideIconURL,
 			"meeting_id":        meetingID,
 			"survey_id":         surveyID,
 			"survey_version":    surveyVersion,
