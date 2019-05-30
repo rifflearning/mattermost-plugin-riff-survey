@@ -15,7 +15,7 @@ export default class PostTypeSurvey extends React.PureComponent {
         setCurrentPostID: PropTypes.func.isRequired,
         setCurrentPostProps: PropTypes.func.isRequired,
         openSurveyModal: PropTypes.func.isRequired,
-    }
+    };
 
     constructor(props) {
         super(props);

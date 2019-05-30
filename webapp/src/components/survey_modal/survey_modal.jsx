@@ -249,6 +249,7 @@ export default class SurveyModal extends React.PureComponent {
 
         return (
             <Modal
+                aria-labelledby='survey-modal-title'
                 show={this.props.visible}
                 onHide={this.handleClose}
                 backdrop={'static'}
@@ -258,7 +259,7 @@ export default class SurveyModal extends React.PureComponent {
                     closeButton={true}
                     closeLabel={'Close'}
                 >
-                    <Modal.Title>
+                    <Modal.Title id='survey-modal-title'>
                         {survey.title}
                     </Modal.Title>
                 </Modal.Header>
