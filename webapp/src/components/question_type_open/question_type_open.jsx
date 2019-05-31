@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {FormGroup, FormControl, HelpBlock} from 'react-bootstrap';
+import {FormGroup, FormControl} from 'react-bootstrap';
 
 import Constants from '../../constants';
 import './styles.css';
@@ -11,7 +11,7 @@ export default class QuestionTypeOpen extends React.PureComponent {
         text: PropTypes.string.isRequired,
         index: PropTypes.number.isRequired,
         handleChange: PropTypes.func.isRequired,
-    }
+    };
 
     constructor(props) {
         super(props);
@@ -29,20 +29,20 @@ export default class QuestionTypeOpen extends React.PureComponent {
     };
 
     render() {
-        const {index, text} = this.props;
+        const {id: questionID, index, text} = this.props;
 
         return (
             <FormGroup className='clearfix'>
-                <p>{`${index}. ${text}`}</p>
+                <p id={questionID}>{`${index}. ${text}`}</p>
                 <FormControl
+                    aria-labelledby={questionID}
                     componentClass='textarea'
-                    maxLength={Constants.OPEN_QUESTION_MAX_LENGTH}
+                    className='open-question-textarea'
                     onChange={this.handleChange}
                     rows={Constants.OPEN_QUESTION_INITIAL_ROWS}
-                    className='open-question-textarea'
-                    id={index}
+                    maxLength={Constants.OPEN_QUESTION_MAX_LENGTH}
                 />
-                <HelpBlock className='float-right'>{`${this.state.remaining} character(s) left`}</HelpBlock>
+                <p className='float-right'>{`${this.state.remaining} character(s) left`}</p>
             </FormGroup>
         );
     }
