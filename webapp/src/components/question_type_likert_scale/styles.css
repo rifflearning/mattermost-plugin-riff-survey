@@ -11,20 +11,38 @@
 }
 
 .likert-option {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
   user-select: none;
   flex: 1 1 0;
+  margin-bottom: 0;
 }
 
 .likert-option:not(:last-child) {
   border-right: 1px solid;
 }
 
+.likert-option:last-child {
+  margin-right: 1px;
+}
+
 .likert-option-label {
   cursor: pointer;
   text-align: center;
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.likert-option-radio-button {
+  clip-path: polygon(0 0);
+  position: absolute;
+  left: 0;
+}
+
+.likert-option-label-span {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.likert-option-radio-button:focus + div.likert-option-label {
+  outline: 5px auto rgba(0, 150, 255, 1);
 }

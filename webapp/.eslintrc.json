@@ -1,7 +1,8 @@
 {
   "extends": [
     "./node_modules/eslint-config-mattermost/.eslintrc.json",
-    "./node_modules/eslint-config-mattermost/.eslintrc-react.json"
+    "./node_modules/eslint-config-mattermost/.eslintrc-react.json",
+    "plugin:jsx-a11y/recommended"
   ],
   "globals": {
     "window": true,
@@ -10,6 +11,7 @@
   "plugins": [
     "header",
     "import",
+    "jsx-a11y",
     "react"
   ],
   "env": {

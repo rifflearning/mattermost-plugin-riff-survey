@@ -148,7 +148,10 @@ export default class SurveyModal extends React.PureComponent {
     renderLoading = () => {
         return (
             <div className='survey-loading'>
-                <img src={loadingGif}/>
+                <img
+                    alt={'Loading'}
+                    src={loadingGif}
+                />
             </div>
         );
     };
@@ -253,7 +256,6 @@ export default class SurveyModal extends React.PureComponent {
                 show={this.props.visible}
                 onHide={this.handleClose}
                 backdrop={'static'}
-                centered={true}
             >
                 <Modal.Header
                     closeButton={true}

@@ -57,6 +57,7 @@ export default class PostTypeSurvey extends React.PureComponent {
                 {messageHtmlToComponent(formatText(message, {atMentions: true}))}
                 <Button
                     bsStyle='primary'
+                    aria-haspopup='true'
                     className='survey-action-button'
                     onClick={this.openModal}
                 >

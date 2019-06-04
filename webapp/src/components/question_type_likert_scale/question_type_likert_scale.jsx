@@ -66,20 +66,24 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
                     className='likert-option'
                     style={optionStyle}
                     htmlFor={radioButtonID}
-                    data-value={response.value}
-                    onMouseOver={this.handleMouseEnter}
-                    onMouseOut={this.handleMouseLeave}
                 >
                     <FormControl
                         type={'radio'}
                         aria-labelledby={labelID}
                         name={questionID}
                         id={radioButtonID}
-                        className='display-none'
+                        className='likert-option-radio-button'
                         value={response.value}
                         onClick={this.handleChange}
                     />
-                    <span className='likert-option-label'>{response.text}</span>
+                    <div
+                        className='likert-option-label'
+                        data-value={response.value}
+                        onMouseEnter={this.handleMouseEnter}
+                        onMouseLeave={this.handleMouseLeave}
+                    >
+                        <span className='likert-option-label-span'>{response.text}</span>
+                    </div>
                 </ControlLabel>
             );
         });
@@ -101,6 +105,7 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
 const getStyle = makeStyleFromTheme((theme) => ({
     selected: {
         backgroundColor: theme.sidebarTextActiveBorder,
+        borderColor: theme.centerChannelColor,
         color: theme.sidebarTextActiveColor,
     },
     hovered: {
