@@ -38,7 +38,7 @@ export default class SurveyModal extends React.PureComponent {
             loadingSubmit: false,
             getSurveyError: false,
             submitResponseError: false,
-            validateResponseError: false,
+            validResponses: false,
         };
         this.submitErrorRef = React.createRef();
     }
@@ -54,9 +54,7 @@ export default class SurveyModal extends React.PureComponent {
             this.getSurvey();
         }
 
-        const submitError = this.state.submitResponseError && !prevState.submitResponseError;
-        const validateError = this.state.validateResponseError && !prevState.validateResponseError;
-        if (submitError || validateError) {
+        if (this.state.submitResponseError && !prevState.submitResponseError) {
             // Scroll to the error alert.
             if (this.submitErrorRef.current) {
                 this.submitErrorRef.current.scrollIntoView({behavior: 'smooth'});
@@ -69,7 +67,7 @@ export default class SurveyModal extends React.PureComponent {
         this.setState({
             loading: true,
             getSurveyError: false,
-            validateResponseError: false,
+            validResponses: false,
             submitResponseError: false,
         });
 
@@ -85,6 +83,7 @@ export default class SurveyModal extends React.PureComponent {
                 survey,
                 responses,
                 loading: false,
+                validResponses: this.validateResponses(responses),
             });
         } else {
             this.setState({
@@ -98,14 +97,7 @@ export default class SurveyModal extends React.PureComponent {
         this.props.close();
     };
 
-    handleSubmit = () => {
-        const valid = this.validateResponses();
-        if (valid) {
-            this.submitResponses();
-        }
-    };
-
-    submitResponses = async () => {
+    handleSubmit = async () => {
         const {survey, responses} = this.state;
         const {surveyPostProps, surveyPostID} = this.props;
         const meetingID = surveyPostProps.meeting_id;
@@ -128,20 +120,13 @@ export default class SurveyModal extends React.PureComponent {
         }
     };
 
-    validateResponses = () => {
-        this.setState({
-            validateResponseError: false,
-        });
-        const {responses} = this.state;
+    validateResponses = (responses) => {
         for (const key in responses) {
-            if (responses.hasOwnProperty(key) && responses[key] !== '') {
+            if (responses.hasOwnProperty(key) && responses[key].trim() !== '') {
                 return true;
             }
         }
 
-        this.setState({
-            validateResponseError: true,
-        });
         return false;
     };
 
@@ -150,7 +135,7 @@ export default class SurveyModal extends React.PureComponent {
             const responses = {...prevState.responses};
             responses[questionID] = response;
             return {
-                validateResponseError: false,
+                validResponses: this.validateResponses(responses),
                 submitResponseError: false,
                 responses,
             };
@@ -204,7 +189,7 @@ export default class SurveyModal extends React.PureComponent {
     };
 
     renderSurvey = () => {
-        const {survey, loadingSubmit, submitResponseError, validateResponseError} = this.state;
+        const {survey, loadingSubmit, submitResponseError, validResponses} = this.state;
 
         let submitLoader;
         if (loadingSubmit) {
@@ -217,7 +202,7 @@ export default class SurveyModal extends React.PureComponent {
         }
 
         let errorAlert;
-        if (submitResponseError || validateResponseError) {
+        if (submitResponseError) {
             errorAlert = (
                 <React.Fragment>
                     <Alert
@@ -228,8 +213,7 @@ export default class SurveyModal extends React.PureComponent {
                             className='fa fa-warning'
                             title='Server Error'
                         />
-                        {submitResponseError && constants.ERROR_MESSAGES.SUBMIT_SURVEY}
-                        {validateResponseError && constants.ERROR_MESSAGES.VALIDATE_SURVEY}
+                        {constants.ERROR_MESSAGES.SUBMIT_SURVEY}
                     </Alert>
                     <div ref={this.submitErrorRef}/>
                 </React.Fragment>
@@ -258,7 +242,7 @@ export default class SurveyModal extends React.PureComponent {
                             bsStyle='primary'
                             className='submit-survey-btn'
                             onClick={this.handleSubmit}
-                            disabled={loadingSubmit}
+                            disabled={loadingSubmit || !validResponses}
                         >
                             {submitLoader}
                             {'Submit'}
