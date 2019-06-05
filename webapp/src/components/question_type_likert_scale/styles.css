@@ -14,14 +14,11 @@
   user-select: none;
   flex: 1 1 0;
   margin-bottom: 0;
+  position: relative;
 }
 
 .likert-option:not(:last-child) {
   border-right: 1px solid;
-}
-
-.likert-option:last-child {
-  margin-right: 1px;
 }
 
 .likert-option-label {
@@ -33,9 +30,8 @@
 }
 
 .likert-option-radio-button {
-  clip-path: polygon(0 0);
+  opacity: 0;
   position: absolute;
-  left: 0;
 }
 
 .likert-option-label-span {
@@ -44,5 +40,5 @@
 }
 
 .likert-option-radio-button:focus + div.likert-option-label {
-  outline: 5px auto rgba(0, 150, 255, 1);
+  box-shadow: inset 0 0 0 3px Highlight;
 }

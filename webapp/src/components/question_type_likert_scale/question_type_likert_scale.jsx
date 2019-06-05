@@ -21,11 +21,12 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
         this.state = {
             selectedValue: '',
             hoveredValue: '',
+            focusedValue: '',
         };
     }
 
-    handleChange = (evt) => {
-        const selectedValue = evt.target.value;
+    handleChange = (e) => {
+        const selectedValue = e.target.value;
         this.props.handleChange(this.props.id, selectedValue);
         this.setState({
             selectedValue,
@@ -66,6 +67,9 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
                     className='likert-option'
                     style={optionStyle}
                     htmlFor={radioButtonID}
+                    data-value={response.value}
+                    onMouseEnter={this.handleMouseEnter}
+                    onMouseLeave={this.handleMouseLeave}
                 >
                     <FormControl
                         type={'radio'}
@@ -78,9 +82,6 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
                     />
                     <div
                         className='likert-option-label'
-                        data-value={response.value}
-                        onMouseEnter={this.handleMouseEnter}
-                        onMouseLeave={this.handleMouseLeave}
                     >
                         <span className='likert-option-label-span'>{response.text}</span>
                     </div>
