@@ -199,7 +199,7 @@ export default class SurveyModal extends React.PureComponent {
                 </p>
                 {questions}
                 <Clearfix>
-                    <ButtonGroup className='float-right'>
+                    <ButtonGroup className='float-right survey-modal-buttons'>
                         <Button
                             type='button'
                             bsStyle='secondary'
@@ -258,6 +258,7 @@ export default class SurveyModal extends React.PureComponent {
 
     render() {
         const {survey, loading, getSurveyError} = this.state;
+        const {visible} = this.props;
 
         let content;
         let cancelFooter;
@@ -273,8 +274,9 @@ export default class SurveyModal extends React.PureComponent {
 
         return (
             <Modal
+                aria-hidden={!visible}
                 aria-labelledby='survey-modal-title'
-                show={this.props.visible}
+                show={visible}
                 onHide={this.handleClose}
                 backdrop={'static'}
             >
@@ -286,7 +288,7 @@ export default class SurveyModal extends React.PureComponent {
                         {survey.title}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className='survey-modal-body'>
                     {content}
                 </Modal.Body>
                 {cancelFooter}
