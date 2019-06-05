@@ -41,6 +41,12 @@ export default class SurveyModal extends React.PureComponent {
         };
     }
 
+    componentDidMount() {
+        if (this.props.visible) {
+            this.getSurvey();
+        }
+    }
+
     componentDidUpdate(prevProps) {
         if (this.props.visible && !prevProps.visible) {
             this.getSurvey();
