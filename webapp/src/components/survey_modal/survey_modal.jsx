@@ -134,11 +134,8 @@ export default class SurveyModal extends React.PureComponent {
         });
         const {responses} = this.state;
         for (const key in responses) {
-            if (responses.hasOwnProperty(key)) {
-                const value = responses[key];
-                if (value !== '') {
-                    return true;
-                }
+            if (responses.hasOwnProperty(key) && responses[key] !== '') {
+                return true;
             }
         }
 
