@@ -38,6 +38,7 @@ export default class SurveyModal extends React.PureComponent {
             loadingSubmit: false,
             getSurveyError: false,
             submitResponseError: false,
+            validateResponseError: false,
         };
         this.submitErrorRef = React.createRef();
     }
@@ -52,7 +53,10 @@ export default class SurveyModal extends React.PureComponent {
         if (this.props.visible && !prevProps.visible) {
             this.getSurvey();
         }
-        if (this.state.submitResponseError && !prevState.submitResponseError) {
+
+        const submitError = this.state.submitResponseError && !prevState.submitResponseError;
+        const validateError = this.state.validateResponseError && !prevState.validateResponseError;
+        if (submitError || validateError) {
             // Scroll to the error alert.
             if (this.submitErrorRef.current) {
                 this.submitErrorRef.current.scrollIntoView({behavior: 'smooth'});
@@ -65,6 +69,7 @@ export default class SurveyModal extends React.PureComponent {
         this.setState({
             loading: true,
             getSurveyError: false,
+            validateResponseError: false,
             submitResponseError: false,
         });
 
@@ -94,7 +99,14 @@ export default class SurveyModal extends React.PureComponent {
         this.props.close();
     };
 
-    handleSubmit = async () => {
+    handleSubmit = () => {
+        const valid = this.validateResponses();
+        if (valid) {
+            this.submitResponses();
+        }
+    };
+
+    submitResponses = async () => {
         const {survey, responses} = this.state;
         const {surveyPostProps, surveyPostID} = this.props;
         const meetingID = surveyPostProps.meeting_id;
@@ -117,11 +129,32 @@ export default class SurveyModal extends React.PureComponent {
         }
     };
 
+    validateResponses = () => {
+        this.setState({
+            validateResponseError: false,
+        });
+        const {responses} = this.state;
+        for (const key in responses) {
+            if (responses.hasOwnProperty(key)) {
+                const value = responses[key];
+                if (value !== '') {
+                    return true;
+                }
+            }
+        }
+
+        this.setState({
+            validateResponseError: true,
+        });
+        return false;
+    };
+
     handleUpdateQuestionResponse = (questionID, response) => {
         this.setState((prevState) => {
             const responses = {...prevState.responses};
             responses[questionID] = response;
             return {
+                validateResponseError: false,
                 submitResponseError: false,
                 responses,
             };
@@ -175,7 +208,7 @@ export default class SurveyModal extends React.PureComponent {
     };
 
     renderSurvey = () => {
-        const {survey, loadingSubmit, submitResponseError} = this.state;
+        const {survey, loadingSubmit, submitResponseError, validateResponseError} = this.state;
 
         let submitLoader;
         if (loadingSubmit) {
@@ -188,7 +221,7 @@ export default class SurveyModal extends React.PureComponent {
         }
 
         let errorAlert;
-        if (submitResponseError) {
+        if (submitResponseError || validateResponseError) {
             errorAlert = (
                 <React.Fragment>
                     <Alert
@@ -199,7 +232,8 @@ export default class SurveyModal extends React.PureComponent {
                             className='fa fa-warning'
                             title='Server Error'
                         />
-                        {' There was some error while submitting your response. Please try again later. If the problem persists, contact your System Administrator.'}
+                        {submitResponseError && constants.ERROR_MESSAGES.SUBMIT_SURVEY}
+                        {validateResponseError && constants.ERROR_MESSAGES.VALIDATE_SURVEY}
                     </Alert>
                     <div ref={this.submitErrorRef}/>
                 </React.Fragment>
@@ -247,7 +281,7 @@ export default class SurveyModal extends React.PureComponent {
                     className='fa fa-warning'
                     title='Server Error'
                 />
-                {' There was some error while fetching survey. Please try again later. If the problem persists, contact your System Administrator.'}
+                {constants.ERROR_MESSAGES.GET_SURVEY}
             </div>
         );
     };

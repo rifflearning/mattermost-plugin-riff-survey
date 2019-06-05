@@ -9,6 +9,12 @@ const QUESTION_TYPES = {
     FIVE_POINT_LIKERT_SCALE: 'five-point-likert-scale',
 };
 
+const ERROR_MESSAGES = {
+    GET_SURVEY: ' There was some error while fetching survey. Please try again later. If the problem persists, contact your System Administrator.',
+    SUBMIT_SURVEY: ' There was some error while submitting your response. Please try again later. If the problem persists, contact your System Administrator.',
+    VALIDATE_SURVEY: ' Please enter your responses.',
+};
+
 const FIVE_POINT_LIKERT_SCALE_RESPONSES = [
     {value: '1', text: 'Strongly Agree'},
     {value: '2', text: 'Agree'},
@@ -22,6 +28,7 @@ const FIVE_POINT_LIKERT_SCALE_RESPONSES = [
 //
 export default {
     ACTION_TYPES,
+    ERROR_MESSAGES,
     FIVE_POINT_LIKERT_SCALE_RESPONSES,
     OPEN_QUESTION_INITIAL_ROWS,
     OPEN_QUESTION_MAX_LENGTH,
