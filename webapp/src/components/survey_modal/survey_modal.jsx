@@ -73,7 +73,6 @@ export default class SurveyModal extends React.PureComponent {
             submitResponseError: false,
         });
 
-        // TODO: Get survey using meetingID instead
         const {data} = await getSurvey(surveyPostProps.survey_id, surveyPostProps.survey_version);
         if (data) {
             const survey = data;

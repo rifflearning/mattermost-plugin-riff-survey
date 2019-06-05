@@ -12,7 +12,7 @@ const QUESTION_TYPES = {
 const ERROR_MESSAGES = {
     GET_SURVEY: ' There was some error while fetching survey. Please try again later. If the problem persists, contact your System Administrator.',
     SUBMIT_SURVEY: ' There was some error while submitting your response. Please try again later. If the problem persists, contact your System Administrator.',
-    VALIDATE_SURVEY: ' Please enter your responses.',
+    VALIDATE_SURVEY: ' Please input your responses to the survey questions.',
 };
 
 const FIVE_POINT_LIKERT_SCALE_RESPONSES = [
