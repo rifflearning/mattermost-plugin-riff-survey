@@ -39,6 +39,7 @@ export default class SurveyModal extends React.PureComponent {
             getSurveyError: false,
             submitResponseError: false,
         };
+        this.submitErrorRef = React.createRef();
     }
 
     componentDidMount() {
@@ -47,9 +48,15 @@ export default class SurveyModal extends React.PureComponent {
         }
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
         if (this.props.visible && !prevProps.visible) {
             this.getSurvey();
+        }
+        if (this.state.submitResponseError && !prevState.submitResponseError) {
+            // Scroll to the error alert.
+            if (this.submitErrorRef.current) {
+                this.submitErrorRef.current.scrollIntoView({behavior: 'smooth'});
+            }
         }
     }
 
@@ -165,6 +172,25 @@ export default class SurveyModal extends React.PureComponent {
     renderSurvey = () => {
         const {survey, loadingSubmit, submitResponseError} = this.state;
 
+        let errorAlert;
+        if (submitResponseError) {
+            errorAlert = (
+                <React.Fragment>
+                    <Alert
+                        bsStyle='warning'
+                        className='survey-server-error-alert'
+                    >
+                        <i
+                            className='fa fa-warning'
+                            title='Server Error'
+                        />
+                        {' There was some error while submitting your response. Please try again later. If the problem persists, contact your System Administrator.'}
+                    </Alert>
+                    <div ref={this.submitErrorRef}/>
+                </React.Fragment>
+            );
+        }
+
         const questions = this.renderQuestions();
         return (
             <div>
@@ -199,18 +225,7 @@ export default class SurveyModal extends React.PureComponent {
                         </Button>
                     </ButtonGroup>
                 </Clearfix>
-                {submitResponseError && (
-                    <Alert
-                        bsStyle='warning'
-                        className='survey-server-error-alert'
-                    >
-                        <i
-                            className='fa fa-warning'
-                            title='Server Error'
-                        />
-                        {' There was some error while submitting your response. Please try again later. If the problem persists, contact your System Administrator.'}
-                    </Alert>
-                )}
+                {errorAlert}
             </div>
         );
     };
