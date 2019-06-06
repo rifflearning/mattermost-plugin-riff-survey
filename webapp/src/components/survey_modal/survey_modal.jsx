@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {Alert, Button, ButtonGroup, Clearfix, Modal} from 'react-bootstrap';
+import {Alert, Button, ButtonGroup, Clearfix, Modal, OverlayTrigger, Tooltip} from 'react-bootstrap';
 
 import QuestionTypeOpen from '../question_type_open';
 import QuestionTypeLikertScale from '../question_type_likert_scale';
@@ -188,8 +188,9 @@ export default class SurveyModal extends React.PureComponent {
         );
     };
 
-    renderSurvey = () => {
-        const {survey, loadingSubmit, submitResponseError, validResponses} = this.state;
+    renderSubmitButton = () => {
+        const {loadingSubmit, validResponses} = this.state;
+        const disabled = loadingSubmit || !validResponses;
 
         let submitLoader;
         if (loadingSubmit) {
@@ -200,6 +201,42 @@ export default class SurveyModal extends React.PureComponent {
                 />
             );
         }
+
+        const submitButton = (
+            <Button
+                type='submit'
+                bsStyle='primary'
+                className='submit-survey-btn'
+                onClick={this.handleSubmit}
+                disabled={disabled}
+                style={disabled ? {pointerEvents: 'none'} : {}}
+            >
+                {submitLoader}
+                {'Submit'}
+            </Button>
+        );
+
+        if (!validResponses) {
+            return (
+                <OverlayTrigger
+                    rootClose={true}
+                    trigger={['hover', 'focus']}
+                    placement='top'
+                    overlay={<Tooltip>{constants.ERROR_MESSAGES.VALIDATE_SURVEY}</Tooltip>}
+                >
+                    <div className='survey-submit-button-container'>
+                        {submitButton}
+                    </div>
+                </OverlayTrigger>
+            );
+        }
+
+        return submitButton;
+    };
+
+    renderSurvey = () => {
+        const {survey, loadingSubmit, submitResponseError} = this.state;
+        const submitButton = this.renderSubmitButton();
 
         let errorAlert;
         if (submitResponseError) {
@@ -237,16 +274,7 @@ export default class SurveyModal extends React.PureComponent {
                         >
                             {'Cancel'}
                         </Button>
-                        <Button
-                            type='submit'
-                            bsStyle='primary'
-                            className='submit-survey-btn'
-                            onClick={this.handleSubmit}
-                            disabled={loadingSubmit || !validResponses}
-                        >
-                            {submitLoader}
-                            {'Submit'}
-                        </Button>
+                        {submitButton}
                     </ButtonGroup>
                 </Clearfix>
                 {errorAlert}

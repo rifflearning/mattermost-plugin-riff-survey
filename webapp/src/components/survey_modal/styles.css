@@ -31,3 +31,8 @@
   padding: 1em;
   margin: 0 0 1em;
 }
+
+.survey-submit-button-container {
+  display: inline-block;
+  cursor: not-allowed;
+}

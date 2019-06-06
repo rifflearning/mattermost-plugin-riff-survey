@@ -12,6 +12,7 @@ const QUESTION_TYPES = {
 const ERROR_MESSAGES = {
     GET_SURVEY: ' There was an error while retrieving the survey. Please try again later. If the problem persists, contact your System Administrator.',
     SUBMIT_SURVEY: ' There was an error while submitting your responses. Please try again later. If the problem persists, contact your System Administrator.',
+    VALIDATE_SURVEY: 'Please provide your answers above.',
 };
 
 const FIVE_POINT_LIKERT_SCALE_RESPONSES = [
