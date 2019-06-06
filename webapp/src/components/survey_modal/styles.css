@@ -6,8 +6,20 @@
   margin-left: 5px !important;
 }
 
-.survey-server-error-alert {
-  margin: 1em 0 0;
+.survey-modal-body {
+  padding: 20px 15px 0 !important;
+}
+
+.survey-modal-buttons {
+  margin: 0 0 1em;
+}
+
+.survey-fetch-server-error {
+  margin: 0 0 1em;
+}
+
+.survey-submit-server-error-alert {
+  margin: 0 0 1em;
 }
 
 .survey-loading {
@@ -16,5 +28,11 @@
   justify-content: center;
   min-height: 5em;
   flex-direction: column;
-  padding-top: 1em;
+  padding: 1em;
+  margin: 0 0 1em;
+}
+
+.survey-submit-button-container {
+  display: inline-block;
+  cursor: not-allowed;
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {Alert, Button, ButtonGroup, Clearfix, Modal} from 'react-bootstrap';
+import {Alert, Button, ButtonGroup, Clearfix, Modal, OverlayTrigger, Tooltip} from 'react-bootstrap';
 
 import QuestionTypeOpen from '../question_type_open';
 import QuestionTypeLikertScale from '../question_type_likert_scale';
@@ -38,7 +38,9 @@ export default class SurveyModal extends React.PureComponent {
             loadingSubmit: false,
             getSurveyError: false,
             submitResponseError: false,
+            validResponses: false,
         };
+        this.submitErrorRef = React.createRef();
     }
 
     componentDidMount() {
@@ -47,9 +49,16 @@ export default class SurveyModal extends React.PureComponent {
         }
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
         if (this.props.visible && !prevProps.visible) {
             this.getSurvey();
+        }
+
+        if (this.state.submitResponseError && !prevState.submitResponseError) {
+            // Scroll to the error alert.
+            if (this.submitErrorRef.current) {
+                this.submitErrorRef.current.scrollIntoView({behavior: 'smooth'});
+            }
         }
     }
 
@@ -58,10 +67,10 @@ export default class SurveyModal extends React.PureComponent {
         this.setState({
             loading: true,
             getSurveyError: false,
+            validResponses: false,
             submitResponseError: false,
         });
 
-        // TODO: Get survey using meetingID instead
         const {data} = await getSurvey(surveyPostProps.survey_id, surveyPostProps.survey_version);
         if (data) {
             const survey = data;
@@ -74,6 +83,7 @@ export default class SurveyModal extends React.PureComponent {
                 survey,
                 responses,
                 loading: false,
+                validResponses: this.validateResponses(responses),
             });
         } else {
             this.setState({
@@ -93,16 +103,31 @@ export default class SurveyModal extends React.PureComponent {
         const meetingID = surveyPostProps.meeting_id;
 
         this.setState({
+            loadingSubmit: true,
             submitResponseError: false,
         });
         const {data} = await this.props.submitSurveyResponses(surveyPostID, meetingID, survey.id, survey.version, responses);
         if (data) {
+            this.setState({
+                loadingSubmit: false,
+            });
             this.handleClose();
         } else {
             this.setState({
+                loadingSubmit: false,
                 submitResponseError: true,
             });
         }
+    };
+
+    validateResponses = (responses) => {
+        for (const key in responses) {
+            if (responses.hasOwnProperty(key) && responses[key].trim() !== '') {
+                return true;
+            }
+        }
+
+        return false;
     };
 
     handleUpdateQuestionResponse = (questionID, response) => {
@@ -110,6 +135,7 @@ export default class SurveyModal extends React.PureComponent {
             const responses = {...prevState.responses};
             responses[questionID] = response;
             return {
+                validResponses: this.validateResponses(responses),
                 submitResponseError: false,
                 responses,
             };
@@ -162,8 +188,74 @@ export default class SurveyModal extends React.PureComponent {
         );
     };
 
+    renderSubmitButton = () => {
+        const {loadingSubmit, validResponses} = this.state;
+        const disabled = loadingSubmit || !validResponses;
+
+        let submitLoader;
+        if (loadingSubmit) {
+            submitLoader = (
+                <span
+                    className='fa fa-spinner fa-fw fa-pulse spinner'
+                    title={'Loading Icon'}
+                />
+            );
+        }
+
+        const submitButton = (
+            <Button
+                type='submit'
+                bsStyle='primary'
+                className='submit-survey-btn'
+                onClick={this.handleSubmit}
+                disabled={disabled}
+                style={disabled ? {pointerEvents: 'none'} : {}}
+            >
+                {submitLoader}
+                {'Submit'}
+            </Button>
+        );
+
+        if (!validResponses) {
+            return (
+                <OverlayTrigger
+                    rootClose={true}
+                    trigger={['hover', 'focus']}
+                    placement='top'
+                    overlay={<Tooltip>{constants.ERROR_MESSAGES.VALIDATE_SURVEY}</Tooltip>}
+                >
+                    <div className='survey-submit-button-container'>
+                        {submitButton}
+                    </div>
+                </OverlayTrigger>
+            );
+        }
+
+        return submitButton;
+    };
+
     renderSurvey = () => {
         const {survey, loadingSubmit, submitResponseError} = this.state;
+        const submitButton = this.renderSubmitButton();
+
+        let errorAlert;
+        if (submitResponseError) {
+            errorAlert = (
+                <React.Fragment>
+                    <Alert
+                        bsStyle='warning'
+                        className='survey-submit-server-error-alert'
+                    >
+                        <i
+                            className='fa fa-warning'
+                            title='Server Error'
+                        />
+                        {constants.ERROR_MESSAGES.SUBMIT_SURVEY}
+                    </Alert>
+                    <div ref={this.submitErrorRef}/>
+                </React.Fragment>
+            );
+        }
 
         const questions = this.renderQuestions();
         return (
@@ -173,7 +265,7 @@ export default class SurveyModal extends React.PureComponent {
                 </p>
                 {questions}
                 <Clearfix>
-                    <ButtonGroup className='float-right'>
+                    <ButtonGroup className='float-right survey-modal-buttons'>
                         <Button
                             type='button'
                             bsStyle='secondary'
@@ -182,47 +274,22 @@ export default class SurveyModal extends React.PureComponent {
                         >
                             {'Cancel'}
                         </Button>
-                        <Button
-                            type='submit'
-                            bsStyle='primary'
-                            className='submit-survey-btn'
-                            onClick={this.handleSubmit}
-                            disabled={loadingSubmit}
-                        >
-                            {loadingSubmit && (
-                                <span
-                                    className='fa fa-spinner fa-fw fa-pulse spinner'
-                                    title={'Loading Icon'}
-                                />
-                            )}
-                            {'Submit'}
-                        </Button>
+                        {submitButton}
                     </ButtonGroup>
                 </Clearfix>
-                {submitResponseError && (
-                    <Alert
-                        bsStyle='warning'
-                        className='survey-server-error-alert'
-                    >
-                        <i
-                            className='fa fa-warning'
-                            title='Server Error'
-                        />
-                        {' There was some error while submitting your response. Please try again later. If the problem persists, contact your System Administrator.'}
-                    </Alert>
-                )}
+                {errorAlert}
             </div>
         );
     };
 
     renderGetSurveyError = () => {
         return (
-            <div>
+            <div className='survey-fetch-server-error'>
                 <i
                     className='fa fa-warning'
                     title='Server Error'
                 />
-                {' There was some error while fetching survey. Please try again later. If the problem persists, contact your System Administrator.'}
+                {constants.ERROR_MESSAGES.GET_SURVEY}
             </div>
         );
     };
@@ -243,6 +310,7 @@ export default class SurveyModal extends React.PureComponent {
 
     render() {
         const {survey, loading, getSurveyError} = this.state;
+        const {visible} = this.props;
 
         let content;
         let cancelFooter;
@@ -258,8 +326,9 @@ export default class SurveyModal extends React.PureComponent {
 
         return (
             <Modal
+                aria-hidden={!visible}
                 aria-labelledby='survey-modal-title'
-                show={this.props.visible}
+                show={visible}
                 onHide={this.handleClose}
                 backdrop={'static'}
             >
@@ -271,7 +340,7 @@ export default class SurveyModal extends React.PureComponent {
                         {survey.title}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body>
+                <Modal.Body className='survey-modal-body'>
                     {content}
                 </Modal.Body>
                 {cancelFooter}
