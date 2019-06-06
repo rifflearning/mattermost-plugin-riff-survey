@@ -11,7 +11,6 @@
 }
 
 .likert-option {
-  user-select: none;
   flex: 1 1 0;
   margin-bottom: 0;
   position: relative;
@@ -37,6 +36,10 @@
 .likert-option-label-span {
   display: table-cell;
   vertical-align: middle;
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
 }
 
 .likert-option-radio-button:focus + div.likert-option-label {
