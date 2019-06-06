@@ -1,7 +1,7 @@
 {
   "id": "survey",
-  "version": "0.4.0",
-  "name": "Survey plugin",
+  "version": "1.0.0",
+  "name": "Survey",
   "description": "",
   "webapp": {
     "bundle_path": "webapp/main.js"

@@ -21,11 +21,12 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
         this.state = {
             selectedValue: '',
             hoveredValue: '',
+            focusedValue: '',
         };
     }
 
-    handleChange = (evt) => {
-        const selectedValue = evt.target.value;
+    handleChange = (e) => {
+        const selectedValue = e.target.value;
         this.props.handleChange(this.props.id, selectedValue);
         this.setState({
             selectedValue,
@@ -67,19 +68,23 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
                     style={optionStyle}
                     htmlFor={radioButtonID}
                     data-value={response.value}
-                    onMouseOver={this.handleMouseEnter}
-                    onMouseOut={this.handleMouseLeave}
+                    onMouseEnter={this.handleMouseEnter}
+                    onMouseLeave={this.handleMouseLeave}
                 >
                     <FormControl
                         type={'radio'}
                         aria-labelledby={labelID}
                         name={questionID}
                         id={radioButtonID}
-                        className='display-none'
+                        className='likert-option-radio-button'
                         value={response.value}
                         onClick={this.handleChange}
                     />
-                    <span className='likert-option-label'>{response.text}</span>
+                    <div
+                        className='likert-option-label'
+                    >
+                        <span className='likert-option-label-span'>{response.text}</span>
+                    </div>
                 </ControlLabel>
             );
         });
@@ -101,6 +106,7 @@ export default class QuestionTypeLikertScale extends React.PureComponent {
 const getStyle = makeStyleFromTheme((theme) => ({
     selected: {
         backgroundColor: theme.sidebarTextActiveBorder,
+        borderColor: theme.centerChannelColor,
         color: theme.sidebarTextActiveColor,
     },
     hovered: {

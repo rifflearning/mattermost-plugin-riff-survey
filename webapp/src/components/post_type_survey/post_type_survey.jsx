@@ -50,13 +50,14 @@ export default class PostTypeSurvey extends React.PureComponent {
     };
 
     renderNotSubmitted = () => {
-        const message = `Hi @${this.props.currentUser.username} - Please tell us about the meeting you just had? It only takes 30 seconds, and helps understand your experience over time.`;
+        const message = `Hi @${this.props.currentUser.username} - Please tell us about the meeting you just had. It only takes 30 seconds, and helps improve Riff.`;
 
         return (
             <div>
                 {messageHtmlToComponent(formatText(message, {atMentions: true}))}
                 <Button
                     bsStyle='primary'
+                    aria-haspopup='true'
                     className='survey-action-button'
                     onClick={this.openModal}
                 >

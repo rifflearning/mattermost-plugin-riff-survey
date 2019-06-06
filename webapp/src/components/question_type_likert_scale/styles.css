@@ -11,13 +11,9 @@
 }
 
 .likert-option {
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  user-select: none;
   flex: 1 1 0;
+  margin-bottom: 0;
+  position: relative;
 }
 
 .likert-option:not(:last-child) {
@@ -27,4 +23,25 @@
 .likert-option-label {
   cursor: pointer;
   text-align: center;
+  display: table;
+  width: 100%;
+  height: 100%;
+}
+
+.likert-option-radio-button {
+  opacity: 0;
+  position: absolute;
+}
+
+.likert-option-label-span {
+  display: table-cell;
+  vertical-align: middle;
+  user-select: none;
+  -ms-user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+}
+
+.likert-option-radio-button:focus + div.likert-option-label {
+  box-shadow: inset 0 0 0 3px Highlight;
 }
