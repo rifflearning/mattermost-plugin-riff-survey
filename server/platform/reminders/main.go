@@ -90,6 +90,11 @@ func sendReminderNotifications(currentTickerTime time.Time) {
 			continue
 		}
 
+		if _, err := config.Mattermost.GetPost(surveyPostID); err != nil {
+			config.Mattermost.LogError("Failed to fetch the survey post. Reminder not sent.", "SurveyPostID", surveyPostID, "Error", err.Error())
+			continue
+		}
+
 		if shouldSendReminder(reminderMetadata, currentTickerTime) {
 			reminderPost.ChannelId = reminderMetadata.ChannelID
 			reminderPost.ParentId = surveyPostID

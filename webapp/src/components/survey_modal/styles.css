@@ -14,7 +14,11 @@
   margin: 0 0 1em;
 }
 
-.survey-server-error-alert {
+.survey-fetch-server-error {
+  margin: 0 0 1em;
+}
+
+.survey-submit-server-error-alert {
   margin: 0 0 1em;
 }
 
@@ -24,5 +28,11 @@
   justify-content: center;
   min-height: 5em;
   flex-direction: column;
-  padding-top: 1em;
+  padding: 1em;
+  margin: 0 0 1em;
+}
+
+.survey-submit-button-container {
+  display: inline-block;
+  cursor: not-allowed;
 }
