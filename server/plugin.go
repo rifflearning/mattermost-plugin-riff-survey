@@ -9,11 +9,11 @@ import (
 	"github.com/mattermost/mattermost-server/plugin"
 	"github.com/pkg/errors"
 
-	"github.com/Brightscout/mattermost-plugin-survey/server/config"
-	"github.com/Brightscout/mattermost-plugin-survey/server/controller"
-	"github.com/Brightscout/mattermost-plugin-survey/server/platform"
-	"github.com/Brightscout/mattermost-plugin-survey/server/platform/reminders"
-	"github.com/Brightscout/mattermost-plugin-survey/server/store/kvstore"
+	"github.com/rifflearning/mattermost-plugin-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-survey/server/controller"
+	"github.com/rifflearning/mattermost-plugin-survey/server/platform"
+	"github.com/rifflearning/mattermost-plugin-survey/server/platform/reminders"
+	"github.com/rifflearning/mattermost-plugin-survey/server/store/kvstore"
 )
 
 type Plugin struct {

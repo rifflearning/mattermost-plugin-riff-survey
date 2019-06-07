@@ -10,8 +10,8 @@ import (
 	"github.com/pkg/errors"
 	"go.uber.org/atomic"
 
-	"github.com/Brightscout/mattermost-plugin-survey/server/model"
-	"github.com/Brightscout/mattermost-plugin-survey/server/store"
+	"github.com/rifflearning/mattermost-plugin-survey/server/model"
+	"github.com/rifflearning/mattermost-plugin-survey/server/store"
 )
 
 const (

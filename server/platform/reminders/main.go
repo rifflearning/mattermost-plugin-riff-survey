@@ -6,8 +6,8 @@ import (
 	serverModel "github.com/mattermost/mattermost-server/model"
 	serverUtils "github.com/mattermost/mattermost-server/utils"
 
-	"github.com/Brightscout/mattermost-plugin-survey/server/config"
-	"github.com/Brightscout/mattermost-plugin-survey/server/model"
+	"github.com/rifflearning/mattermost-plugin-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-survey/server/model"
 )
 
 var (
