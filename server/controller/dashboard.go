@@ -6,7 +6,7 @@ import (
 	serverModel "github.com/mattermost/mattermost-server/model"
 	"github.com/pkg/errors"
 
-	"github.com/Brightscout/mattermost-plugin-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-survey/server/config"
 )
 
 var getDashboardPath = &Endpoint{

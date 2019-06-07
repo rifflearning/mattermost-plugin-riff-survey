@@ -6,7 +6,7 @@ import (
 
 	"github.com/pkg/errors"
 
-	"github.com/Brightscout/mattermost-plugin-survey/server/platform"
+	"github.com/rifflearning/mattermost-plugin-survey/server/platform"
 )
 
 var getSurvey = &Endpoint{

@@ -1,7 +1,7 @@
 package store
 
 import (
-	"github.com/Brightscout/mattermost-plugin-survey/server/model"
+	"github.com/rifflearning/mattermost-plugin-survey/server/model"
 )
 
 // SurveyStore allows to access surveys with some kind of store.

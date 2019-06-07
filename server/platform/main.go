@@ -4,9 +4,9 @@ import (
 	serverModel "github.com/mattermost/mattermost-server/model"
 	"github.com/pkg/errors"
 
-	"github.com/Brightscout/mattermost-plugin-survey/server/config"
-	"github.com/Brightscout/mattermost-plugin-survey/server/model"
-	"github.com/Brightscout/mattermost-plugin-survey/server/platform/reminders"
+	"github.com/rifflearning/mattermost-plugin-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-survey/server/model"
+	"github.com/rifflearning/mattermost-plugin-survey/server/platform/reminders"
 )
 
 // GetSurvey returns the survey with a given id and version.

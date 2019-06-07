@@ -3,8 +3,8 @@ package controller
 import (
 	"net/http"
 
-	"github.com/Brightscout/mattermost-plugin-survey/server/config"
-	"github.com/Brightscout/mattermost-plugin-survey/server/platform"
+	"github.com/rifflearning/mattermost-plugin-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-survey/server/platform"
 )
 
 var sendSurvey = &Endpoint{

@@ -3,9 +3,9 @@ package kvstore
 import (
 	"strconv"
 
-	"github.com/Brightscout/mattermost-plugin-survey/server/config"
-	"github.com/Brightscout/mattermost-plugin-survey/server/model"
-	"github.com/Brightscout/mattermost-plugin-survey/server/store"
+	"github.com/rifflearning/mattermost-plugin-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-survey/server/model"
+	"github.com/rifflearning/mattermost-plugin-survey/server/store"
 )
 
 // KVStore is the implementation for the SurveyStore interface using the plugin KV Store.

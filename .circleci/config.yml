@@ -6,7 +6,7 @@ jobs:
   build:
     docker:
       - image: circleci/golang:1.11-node
-    working_directory: /go/src/github.com/Brightscout/mattermost-plugin-survey
+    working_directory: /go/src/github.com/rifflearning/mattermost-plugin-survey
     steps:
       - checkout
       - restore_cache:
@@ -40,7 +40,7 @@ jobs:
   release:
     docker:
       - image: circleci/golang:1.11-node
-    working_directory: /go/src/github.com/Brightscout/mattermost-plugin-survey
+    working_directory: /go/src/github.com/rifflearning/mattermost-plugin-survey
     steps:
       - checkout
       - attach_workspace:
