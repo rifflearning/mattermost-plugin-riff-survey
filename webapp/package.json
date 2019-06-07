@@ -39,7 +39,7 @@
   },
   "dependencies": {
     "core-js": "^2.5.7",
-    "mattermost-redux": "5.5.1",
+    "mattermost-redux": "^5.10.0",
     "prop-types": "15.6.2",
     "react": "16.7.0",
     "react-bootstrap": "0.32.4",
