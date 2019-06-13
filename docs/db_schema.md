@@ -2,7 +2,7 @@
 
 ## Survey
 
-Stores the survey information. All survey with different IDs and all versions are maintained as different entries in the DB.
+Stores the survey information. All surveys with different IDs, and all the different versions of surveys with the same ID, are maintained as different entries in the DB.
 
 ```
 key: hash[survey_<survey_id>_<survey_version>]
