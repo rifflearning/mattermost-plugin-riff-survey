@@ -1,6 +1,6 @@
 {
     "id": "survey",
-    "version": "1.0.0",
+    "version": "1.0.6",
     "name": "Riff Survey",
     "description": "",
     "min_server_version": "5.12.0",
