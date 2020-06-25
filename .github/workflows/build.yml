@@ -36,17 +36,6 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      # Only use the ssh-agent action below if your repository has private git dependencies
-      # Note: Only one ssh_private_key will work at a time if using deploy keys
-      #      - name: Setup SSH Keys and known_hosts
-      #        uses: webfactory/ssh-agent@v0.3.0
-      #        with:
-      #          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-      # The `PERSONAL_ACCESS_TOKEN` secret is required for installing dependencies from the github packages registry
-      - name: Authenticate with GitHub package registry
-        run: echo "//npm.pkg.github.com/:_authToken=${{ secrets.PERSONAL_ACCESS_TOKEN }}" > ~/.npmrc
-
       - name: Check the code style, run tests, build and bundle the plugin.
         run: make all
         env:
