@@ -1,7 +1,13 @@
 {
   "name": "webapp",
+  "description": "Client component of the riff-survey mattermost plugin",
   "version": "0.0.1",
-  "description": "",
+  "license": "See license for riff-survey plugin",
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rifflearning/mattermost-plugin-riff-survey.git"
+  },
   "main": "src/index.jsx",
   "scripts": {
     "build": "webpack --mode=production",
@@ -14,8 +20,21 @@
     "lint": "eslint --ignore-pattern node_modules --ignore-pattern dist --ext .js --ext .jsx . --quiet",
     "fix": "eslint --ignore-pattern node_modules --ignore-pattern dist --ext .js --ext .jsx . --quiet --fix"
   },
-  "author": "",
-  "license": "",
+  "dependencies": {
+    "clsx": "^1.1.0",
+    "core-js": "^3.6.5",
+    "js-cookie": "^2.2.1",
+    "mattermost-redux": "^5.25.0",
+    "prop-types": "15.7.2",
+    "react": "^16.13.1",
+    "react-bootstrap": "^1.2.2",
+    "react-custom-scrollbars": "^4.2.1",
+    "react-dom": "^16.12.0",
+    "react-redux": "^7.2.0",
+    "react-transition-group": "^4.4.1",
+    "redux": "^4.0.5",
+    "superagent": "^5.3.1"
+  },
   "devDependencies": {
     "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
@@ -56,25 +75,10 @@
     "style-loader": "^1.2.1",
     "stylelint": "^13.6.1",
     "stylelint-config-standard": "^20.0.0",
+    "typescript": "^3.9.7",
     "url-loader": "^4.1.0",
     "webpack": "^4.43.0",
     "webpack-cli": "^3.3.12"
-  },
-  "dependencies": {
-    "clsx": "^1.1.0",
-    "core-js": "^3.6.5",
-    "js-cookie": "^2.2.1",
-    "mattermost-redux": "^5.25.0",
-    "prop-types": "15.7.2",
-    "react": "^16.13.1",
-    "react-bootstrap": "^1.2.2",
-    "react-custom-scrollbars": "^4.2.1",
-    "react-dom": "^16.12.0",
-    "react-redux": "^7.2.0",
-    "react-transition-group": "^4.4.1",
-    "redux": "^4.0.5",
-    "superagent": "^5.3.1",
-    "typescript": "^3.9.7"
   },
   "jest": {
     "snapshotSerializers": [
