@@ -122,7 +122,7 @@ export default class SurveyModal extends React.PureComponent {
             surveyOptions.meetingID,
             survey.id,
             survey.version,
-            responses
+            responses,
         );
         if (data) {
             this.setState({

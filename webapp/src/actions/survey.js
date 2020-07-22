@@ -2,7 +2,7 @@ import Client from '../client';
 import Constants from '../constants';
 
 export const openSurveyModal = (postID, meetingID, surveyID, surveyVersion) => (
-    dispatch
+    dispatch,
 ) => {
     dispatch({
         type: Constants.ACTION_TYPES.OPEN_SURVEY_MODAL,
@@ -43,7 +43,7 @@ export function submitSurveyResponses(
     meetingID,
     surveyID,
     surveyVersion,
-    responses
+    responses,
 ) {
     return async () => {
         let data;
@@ -53,7 +53,7 @@ export function submitSurveyResponses(
                 meetingID,
                 surveyID,
                 surveyVersion,
-                responses
+                responses,
             );
         } catch (error) {
             return {

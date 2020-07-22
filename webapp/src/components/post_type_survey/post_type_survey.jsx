@@ -29,7 +29,7 @@ export default class PostTypeSurvey extends React.PureComponent {
             postID,
             meetingID,
             postProps.survey_id,
-            postProps.survey_version
+            postProps.survey_version,
         );
     };
 
@@ -42,7 +42,7 @@ export default class PostTypeSurvey extends React.PureComponent {
         return (
             <div>
                 {messageHtmlToComponent(
-                    formatText(message, {atMentions: true})
+                    formatText(message, {atMentions: true}),
                 )}
                 <Button
                     bsStyle='primary'
@@ -61,7 +61,7 @@ export default class PostTypeSurvey extends React.PureComponent {
         return (
             <div>
                 {messageHtmlToComponent(
-                    formatText(message, {atMentions: true})
+                    formatText(message, {atMentions: true}),
                 )}
                 <Button
                     bsStyle='primary'
