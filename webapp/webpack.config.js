@@ -107,12 +107,14 @@ module.exports = {
     },
     target: 'web',
     plugins: [
-        new CopyWebpackPlugin([
-            {
-                from: 'assets',
-                to: 'static/',
-            },
-        ]),
+        new CopyWebpackPlugin({
+            patterns: [
+                {
+                    from: 'assets',
+                    to: 'static/',
+                },
+            ],
+        }),
         {
             apply: (compiler) => {
                 compiler.hooks.afterEmit.tap('AfterEmitPlugin', () => {
