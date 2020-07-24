@@ -1,10 +1,10 @@
 {
     "id": "ai.riffanalytics.survey",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "name": "Riff Survey",
     "description": "",
-    "homepage_url": "https://github.com/rifflearning/mattermost-plugin-survey",
-    "support_url": "https://github.com/rifflearning/mattermost-plugin-survey/issues",
+    "homepage_url": "https://github.com/rifflearning/mattermost-plugin-riff-survey",
+    "support_url": "https://github.com/rifflearning/mattermost-plugin-riff-survey/issues",
     "icon_path": "assets/logo.svg",
     "min_server_version": "5.22.0",
     "server": {
