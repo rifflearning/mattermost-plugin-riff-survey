@@ -1,9 +1,8 @@
 package platform
 
 import (
-	serverModel "github.com/mattermost/mattermost-server/model"
+	serverModel "github.com/mattermost/mattermost-server/v5/model"
 	"github.com/pkg/errors"
-
 	"github.com/rifflearning/mattermost-plugin-survey/server/config"
 	"github.com/rifflearning/mattermost-plugin-survey/server/model"
 	"github.com/rifflearning/mattermost-plugin-survey/server/platform/reminders"
@@ -75,45 +74,6 @@ func SaveLatestSurveyInfo(id string, version int) error {
 	return nil
 }
 
-// SubmitSurveyResponse saves the survey response to the DB.
-func SubmitSurveyResponse(surveyPostID string, response *model.SurveyResponse) error {
-	userMeetingMetadata := GetUserMeetingMetadata(response.UserID, response.MeetingID)
-	if userMeetingMetadata == nil || userMeetingMetadata.SurveySentAt == 0 {
-		config.Mattermost.LogError("Received response but survey was not sent to the user.", "UserID", response.UserID, "MeetingID", response.MeetingID, "Response", string(response.EncodeToByte()))
-		return errors.New("unable to record user response: user not sent a survey for this meeting")
-	}
-
-	if userMeetingMetadata.RespondedAt != 0 {
-		config.Mattermost.LogError("User has already responded to this survey. New response not recorded.", "UserID", response.UserID, "MeetingID", response.MeetingID, "Response", string(response.EncodeToByte()))
-		return errors.New("unable to record user response: response already exists")
-	}
-
-	response = response.PreSave()
-	if err := config.Store.SaveSurveyResponse(response); err != nil {
-		config.Mattermost.LogError("Failed to save the survey response.", "Error", err.Error())
-		return err
-	}
-
-	surveyPost, appErr := config.Mattermost.GetPost(surveyPostID)
-	if appErr != nil {
-		config.Mattermost.LogError("Failed to get the survey post.", "Error", appErr.Error())
-		return appErr
-	}
-
-	surveyPost.AddProp(config.PropSurveySubmitted, true)
-	if _, appErr := config.Mattermost.UpdatePost(surveyPost); appErr != nil {
-		config.Mattermost.LogError("Failed to update the survey post.", "Error", appErr.Error())
-		return appErr
-	}
-
-	userMeetingMetadata.RespondedAt = response.CreatedAt
-	if err := SaveUserMeetingMetadata(userMeetingMetadata); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // GetSurveyInfoForMeeting is called to select the survey for a meeting
 func GetSurveyInfoForMeeting(meetingID string) (string, int, error) {
 	if meetingMetadata := GetMeetingMetadata(meetingID); meetingMetadata != nil {
@@ -128,7 +88,7 @@ func GetSurveyInfoForMeeting(meetingID string) (string, int, error) {
 	}
 
 	if err := SaveMeetingMetadata(meetingID, info.SurveyID, info.SurveyVersion); err != nil {
-		return "", 0, err
+		return "", 0, errors.Wrap(err, "failed to save meeting metadata")
 	}
 
 	return info.SurveyID, info.SurveyVersion, nil
@@ -160,8 +120,8 @@ func SendSurveyPost(userID, meetingID string) error {
 		Message:   "Survey",
 		Props: serverModel.StringInterface{
 			"from_webhook":      "true",
-			"override_username": config.OverrideUsername,
-			"override_icon_url": config.OverrideIconURL,
+			"override_username": config.BotDisplayName,
+			"override_icon_url": config.BotIconURL,
 			"meeting_id":        meetingID,
 			"survey_id":         surveyID,
 			"survey_version":    surveyVersion,

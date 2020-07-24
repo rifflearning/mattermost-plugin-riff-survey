@@ -1,11 +1,14 @@
-import {closeSurveyModal, getSurvey, openSurveyModal, submitSurveyResponses} from './survey';
+import {
+    closeSurveyModal, getSurvey, getSurveyResponses, openSurveyModal, submitSurveyResponses,
+} from './survey';
 import {setCurrentPostID, setCurrentPostProps} from './post';
-import {getDashboardPath} from './dashboard';
+import {openRiffDashboard} from './dashboard';
 
 export default {
     closeSurveyModal,
-    getDashboardPath,
     getSurvey,
+    getSurveyResponses,
+    openRiffDashboard,
     openSurveyModal,
     setCurrentPostID,
     setCurrentPostProps,

@@ -6,7 +6,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mattermost/mattermost-server/plugin"
+	serverModel "github.com/mattermost/mattermost-server/v5/model"
+	"github.com/mattermost/mattermost-server/v5/plugin"
 	"github.com/pkg/errors"
 	"go.uber.org/atomic"
 
@@ -15,16 +16,15 @@ import (
 )
 
 const (
-	CommandPrefix             = PluginName
-	ServerExeToWebappRootPath = "/../webapp"
-
 	URLPluginBase = "/plugins/" + PluginName
 	URLStaticBase = URLPluginBase + "/static"
 
 	HeaderMattermostUserID = "Mattermost-User-Id"
 
-	OverrideUsername = "Riff Bot"
-	OverrideIconURL  = URLStaticBase + "/logo.png"
+	BotUsername    = "riffbot"
+	BotDisplayName = "Riff Bot"
+	BotIconURL     = URLStaticBase + "/riffbot.png"
+	botIconPath    = "assets/riffbot.png"
 
 	HardcodedSurveyID = "f298903f8a80054ba09e342d0d9780635d3675a2"
 
@@ -36,13 +36,12 @@ const (
 var (
 	config     atomic.Value
 	Mattermost plugin.API
+	Helpers    plugin.Helpers
 	Store      store.SurveyStore
 )
 
 type Configuration struct {
-	BotUsername      string `json:"BotUsername"`
 	Survey           string `json:"Survey"`
-	DashboardPath    string `json:"DashboardPath"`
 	ReminderText     string `json:"ReminderText"`
 	MaxReminderCount string `json:"MaxReminderCount"`
 	ReminderInterval string `json:"ReminderInterval"`
@@ -64,11 +63,15 @@ func SetConfig(c *Configuration) {
 
 func (c *Configuration) ProcessConfiguration() error {
 	// Derive BotUserID
-	user, err := Mattermost.GetUserByUsername(c.BotUsername)
-	if err != nil {
-		return errors.Wrap(err, "failed to get bot user")
+	bot := &serverModel.Bot{
+		Username:    BotUsername,
+		DisplayName: BotDisplayName,
 	}
-	c.BotUserID = user.Id
+	botID, ensureBotError := Helpers.EnsureBot(bot, plugin.ProfileImagePath(botIconPath))
+	if ensureBotError != nil {
+		return errors.Wrap(ensureBotError, "failed to ensure riff bot")
+	}
+	c.BotUserID = botID
 
 	// Derive ParsedSurvey
 	var parsedSurvey *model.Survey
@@ -98,14 +101,6 @@ func (c *Configuration) ProcessConfiguration() error {
 }
 
 func (c *Configuration) IsValid() error {
-	if c.BotUsername == "" {
-		return errors.New("Bot username cannot be empty")
-	}
-
-	if c.DashboardPath == "" {
-		return errors.New("Dashboard path cannot be empty")
-	}
-
 	if c.ReminderText == "" {
 		return errors.New("Reminder text cannot be empty")
 	}

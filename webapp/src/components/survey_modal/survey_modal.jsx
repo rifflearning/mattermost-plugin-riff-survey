@@ -1,24 +1,33 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import {Alert, Button, ButtonGroup, Clearfix, Modal, OverlayTrigger, Tooltip} from 'react-bootstrap';
+import {
+    Alert,
+    Button,
+    ButtonGroup,
+    Clearfix,
+    Modal,
+    OverlayTrigger,
+    Tooltip,
+} from 'react-bootstrap';
+
+import loadingGif from 'assets/load.gif';
 
 import QuestionTypeOpen from '../question_type_open';
 import QuestionTypeLikertScale from '../question_type_likert_scale';
 
 import constants from '../../constants';
-import loadingGif from '../../../assets/load.gif';
 
 import './styles.css';
 
 export default class SurveyModal extends React.PureComponent {
     static propTypes = {
         theme: PropTypes.object.isRequired,
-        surveyPostID: PropTypes.string.isRequired,
-        surveyPostProps: PropTypes.object.isRequired,
+        surveyOptions: PropTypes.object.isRequired,
         visible: PropTypes.bool.isRequired,
         close: PropTypes.func.isRequired,
         getSurvey: PropTypes.func.isRequired,
+        getSurveyResponses: PropTypes.func.isRequired,
         submitSurveyResponses: PropTypes.func.isRequired,
     };
 
@@ -32,8 +41,7 @@ export default class SurveyModal extends React.PureComponent {
                 description: '',
                 questions: [],
             },
-            responses: {
-            },
+            responses: {},
             loading: false,
             loadingSubmit: false,
             getSurveyError: false,
@@ -57,13 +65,15 @@ export default class SurveyModal extends React.PureComponent {
         if (this.state.submitResponseError && !prevState.submitResponseError) {
             // Scroll to the error alert.
             if (this.submitErrorRef.current) {
-                this.submitErrorRef.current.scrollIntoView({behavior: 'smooth'});
+                this.submitErrorRef.current.scrollIntoView({
+                    behavior: 'smooth',
+                });
             }
         }
     }
 
     getSurvey = async () => {
-        const {surveyPostProps, getSurvey} = this.props;
+        const {surveyOptions, getSurvey, getSurveyResponses} = this.props;
         this.setState({
             loading: true,
             getSurveyError: false,
@@ -71,13 +81,25 @@ export default class SurveyModal extends React.PureComponent {
             submitResponseError: false,
         });
 
-        const {data} = await getSurvey(surveyPostProps.survey_id, surveyPostProps.survey_version);
+        const {data} = await getSurvey(
+            surveyOptions.surveyID,
+            surveyOptions.surveyVersion,
+            surveyOptions.meetingID,
+        );
         if (data) {
             const survey = data;
-            const responses = survey.questions.reduce((obj, question) => {
+            let responses = survey.questions.reduce((obj, question) => {
                 obj[question.id] = '';
                 return obj;
             }, {});
+
+            const prevSurveyResponse = await getSurveyResponses(surveyOptions.meetingID);
+            if (prevSurveyResponse.data) {
+                responses = {
+                    ...responses,
+                    ...prevSurveyResponse.data.responses,
+                };
+            }
 
             this.setState({
                 survey,
@@ -99,14 +121,19 @@ export default class SurveyModal extends React.PureComponent {
 
     handleSubmit = async () => {
         const {survey, responses} = this.state;
-        const {surveyPostProps, surveyPostID} = this.props;
-        const meetingID = surveyPostProps.meeting_id;
+        const {surveyOptions} = this.props;
 
         this.setState({
             loadingSubmit: true,
             submitResponseError: false,
         });
-        const {data} = await this.props.submitSurveyResponses(surveyPostID, meetingID, survey.id, survey.version, responses);
+        const {data} = await this.props.submitSurveyResponses(
+            surveyOptions.postID,
+            surveyOptions.meetingID,
+            survey.id,
+            survey.version,
+            responses,
+        );
         if (data) {
             this.setState({
                 loadingSubmit: false,
@@ -144,7 +171,8 @@ export default class SurveyModal extends React.PureComponent {
 
     renderQuestions = () => {
         const {theme} = this.props;
-        const questionsList = this.state.survey.questions;
+        const {survey, responses} = this.state;
+        const questionsList = survey.questions;
 
         return questionsList.map((question, idx) => {
             const baseProps = {
@@ -152,22 +180,21 @@ export default class SurveyModal extends React.PureComponent {
                 id: question.id,
                 key: question.id,
                 text: question.text,
+                value: responses[question.id],
                 theme,
                 handleChange: this.handleUpdateQuestionResponse,
             };
             switch (question.type) {
             case constants.QUESTION_TYPES.OPEN:
-                return (
-                    <QuestionTypeOpen
-                        {...baseProps}
-                    />
-                );
+                return <QuestionTypeOpen {...baseProps}/>;
 
             case constants.QUESTION_TYPES.FIVE_POINT_LIKERT_SCALE:
                 return (
                     <QuestionTypeLikertScale
                         {...baseProps}
-                        responses={constants.FIVE_POINT_LIKERT_SCALE_RESPONSES}
+                        responses={
+                            constants.FIVE_POINT_LIKERT_SCALE_RESPONSES
+                        }
                     />
                 );
 
@@ -222,7 +249,11 @@ export default class SurveyModal extends React.PureComponent {
                     rootClose={true}
                     trigger={['hover', 'focus']}
                     placement='top'
-                    overlay={<Tooltip>{constants.ERROR_MESSAGES.VALIDATE_SURVEY}</Tooltip>}
+                    overlay={
+                        <Tooltip>
+                            {constants.ERROR_MESSAGES.VALIDATE_SURVEY}
+                        </Tooltip>
+                    }
                 >
                     <div className='survey-submit-button-container'>
                         {submitButton}
@@ -260,9 +291,7 @@ export default class SurveyModal extends React.PureComponent {
         const questions = this.renderQuestions();
         return (
             <div>
-                <p className='survey-banner-text'>
-                    {survey.description}
-                </p>
+                <p className='survey-banner-text'>{survey.description}</p>
                 {questions}
                 <Clearfix>
                     <ButtonGroup className='float-right survey-modal-buttons'>
@@ -340,9 +369,7 @@ export default class SurveyModal extends React.PureComponent {
                         {survey.title}
                     </Modal.Title>
                 </Modal.Header>
-                <Modal.Body className='survey-modal-body'>
-                    {content}
-                </Modal.Body>
+                <Modal.Body className='survey-modal-body'>{content}</Modal.Body>
                 {cancelFooter}
             </Modal>
         );
