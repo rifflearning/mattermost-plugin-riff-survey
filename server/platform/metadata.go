@@ -1,8 +1,8 @@
 package platform
 
 import (
-	"github.com/rifflearning/mattermost-plugin-survey/server/config"
-	"github.com/rifflearning/mattermost-plugin-survey/server/model"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/model"
 )
 
 // TODO: Remove this file and update all usages

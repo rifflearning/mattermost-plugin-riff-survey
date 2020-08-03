@@ -3,9 +3,9 @@ package kvstore
 import (
 	"strconv"
 
-	"github.com/rifflearning/mattermost-plugin-survey/server/config"
-	"github.com/rifflearning/mattermost-plugin-survey/server/model"
-	"github.com/rifflearning/mattermost-plugin-survey/server/store"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/model"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/store"
 )
 
 // KVStore is the implementation for the SurveyStore interface using the plugin KV Store.

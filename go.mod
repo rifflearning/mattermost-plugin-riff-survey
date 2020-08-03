@@ -1,4 +1,4 @@
-module github.com/rifflearning/mattermost-plugin-survey
+module github.com/rifflearning/mattermost-plugin-riff-survey
 
 go 1.14
 

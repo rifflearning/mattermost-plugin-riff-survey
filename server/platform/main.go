@@ -3,9 +3,9 @@ package platform
 import (
 	serverModel "github.com/mattermost/mattermost-server/v5/model"
 	"github.com/pkg/errors"
-	"github.com/rifflearning/mattermost-plugin-survey/server/config"
-	"github.com/rifflearning/mattermost-plugin-survey/server/model"
-	"github.com/rifflearning/mattermost-plugin-survey/server/platform/reminders"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/model"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/platform/reminders"
 )
 
 // GetSurvey returns the survey with a given id and version.
