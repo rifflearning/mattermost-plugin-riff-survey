@@ -7,8 +7,8 @@ import (
 
 	"github.com/gorilla/mux"
 	serverModel "github.com/mattermost/mattermost-server/v5/model"
-	"github.com/rifflearning/mattermost-plugin-survey/server/config"
-	"github.com/rifflearning/mattermost-plugin-survey/server/util"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/util"
 )
 
 type Endpoint struct {

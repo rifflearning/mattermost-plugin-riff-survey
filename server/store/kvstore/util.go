@@ -3,7 +3,7 @@ package kvstore
 import (
 	"fmt"
 
-	"github.com/rifflearning/mattermost-plugin-survey/server/util"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/util"
 )
 
 const (

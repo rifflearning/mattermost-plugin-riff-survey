@@ -11,8 +11,8 @@ import (
 	"github.com/pkg/errors"
 	"go.uber.org/atomic"
 
-	"github.com/rifflearning/mattermost-plugin-survey/server/model"
-	"github.com/rifflearning/mattermost-plugin-survey/server/store"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/model"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/store"
 )
 
 const (

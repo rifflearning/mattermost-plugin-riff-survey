@@ -5,11 +5,11 @@ import (
 
 	"github.com/mattermost/mattermost-server/v5/plugin"
 
-	"github.com/rifflearning/mattermost-plugin-survey/server/config"
-	"github.com/rifflearning/mattermost-plugin-survey/server/controller"
-	"github.com/rifflearning/mattermost-plugin-survey/server/platform"
-	"github.com/rifflearning/mattermost-plugin-survey/server/platform/reminders"
-	"github.com/rifflearning/mattermost-plugin-survey/server/store/kvstore"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/controller"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/platform"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/platform/reminders"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/store/kvstore"
 )
 
 type Plugin struct {

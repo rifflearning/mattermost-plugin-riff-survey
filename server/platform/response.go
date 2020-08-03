@@ -3,8 +3,8 @@ package platform
 import (
 	serverModel "github.com/mattermost/mattermost-server/v5/model"
 	"github.com/pkg/errors"
-	"github.com/rifflearning/mattermost-plugin-survey/server/config"
-	"github.com/rifflearning/mattermost-plugin-survey/server/model"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/config"
+	"github.com/rifflearning/mattermost-plugin-riff-survey/server/model"
 )
 
 // GetUserResponses returns the user response to the survey for a meeting with a given userID and meetingID.
