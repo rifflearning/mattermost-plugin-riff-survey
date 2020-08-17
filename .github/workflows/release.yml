@@ -10,7 +10,7 @@ on:
 jobs:
   build_and_release:
     name: Build and release
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     steps:
       - name: Set up Go v1.14
         uses: actions/setup-go@v2
@@ -21,6 +21,8 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ^12.18.3
+
+      - uses: actions/checkout@v2
 
       - name: Cache go modules
         uses: actions/cache@v2
@@ -37,8 +39,6 @@ jobs:
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
-
-      - uses: actions/checkout@v2
 
       - name: Build and bundle the plugin
         id: build
