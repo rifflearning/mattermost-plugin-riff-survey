@@ -1,6 +1,6 @@
 {
     "id": "ai.riffanalytics.survey",
-    "version": "2.0.1",
+    "version": "2.1.0",
     "name": "Riff Survey",
     "description": "",
     "homepage_url": "https://github.com/rifflearning/mattermost-plugin-riff-survey",
