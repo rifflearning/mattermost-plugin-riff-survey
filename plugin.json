@@ -6,7 +6,7 @@
     "homepage_url": "https://github.com/rifflearning/mattermost-plugin-riff-survey",
     "support_url": "https://github.com/rifflearning/mattermost-plugin-riff-survey/issues",
     "icon_path": "assets/logo.svg",
-    "min_server_version": "5.22.0",
+    "min_server_version": "5.25.0",
     "server": {
         "executables": {
             "linux-amd64": "server/dist/plugin-linux-amd64",
