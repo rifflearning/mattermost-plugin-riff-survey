@@ -3,6 +3,7 @@ import {
 } from './survey';
 import {setCurrentPostID, setCurrentPostProps} from './post';
 import {openRiffDashboard} from './dashboard';
+import {pluginEnabled, pluginDisabled} from './enable';
 
 export default {
     closeSurveyModal,
@@ -10,6 +11,8 @@ export default {
     getSurveyResponses,
     openRiffDashboard,
     openSurveyModal,
+    pluginEnabled,
+    pluginDisabled,
     setCurrentPostID,
     setCurrentPostProps,
     submitSurveyResponses,
