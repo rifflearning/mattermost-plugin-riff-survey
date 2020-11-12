@@ -1,7 +1,7 @@
 {
   "name": "plugin-riff-survey-webapp",
   "description": "The client side component of the riff-survey plugin",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "license": "See license for riff-survey plugin",
   "private": true,
   "repository": {
