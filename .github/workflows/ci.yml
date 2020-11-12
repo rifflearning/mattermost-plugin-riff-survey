@@ -1,14 +1,20 @@
-name: Release
+# Continuous Integration Workflow to check pushes to master and pull requests:
+# - code style guidelines are followed (make check-style)
+# - tests pass (make test)
+# - code builds (make dist)
+name: CI
 
 on:
+  pull_request:
   push:
-    tags:
-      - 'v*'
+    branches:
+      - master
 
 jobs:
-  build_and_release:
-    name: Build and release
+  ci:
+    name: Check style; build; test
     runs-on: ubuntu-latest
+
     steps:
       - name: Set up Go v1.14.x
         uses: actions/setup-go@v2
@@ -38,7 +44,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-node-
 
-      - name: Build and bundle the plugin
+      - name: Install webapp dependencies
+        run: make webapp/.npminstall
+        env:
+          TERM: dumb
+
+      - name: check style
+        run: make check-style
+        env:
+          TERM: dumb
+
+      - name: run tests
+        run: make test
+        env:
+          TERM: dumb
+
+      - name: build and bundle the plugin
         id: build
         run: |
           make dist
@@ -46,23 +67,8 @@ jobs:
         env:
           TERM: dumb
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload the built plugin as an artifact
+        uses: actions/upload-artifact@v2
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
-      - name: Upload Release Asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/${{ steps.build.outputs.BUNDLE_NAME }}
-          asset_name: ${{ steps.build.outputs.BUNDLE_NAME }}
-          asset_content_type: application/gzip
+          name: ${{ steps.build.outputs.BUNDLE_NAME }}
+          path: dist/${{ steps.build.outputs.BUNDLE_NAME }}
