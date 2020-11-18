@@ -101,7 +101,7 @@ Stores the metadata information about surveys sent to a user. A unique entry is 
 ```
 key: user_meeting_metadata_<user_id>_<meeting_id>
 value:  {
-    type: "meeting_metadata",
+    type: "user_meeting_metadata",
     user_id: "string",
     meeting_id: "string",
     survey_sent_at: <timestamp>,
@@ -116,7 +116,7 @@ Stores the information about reminders. A unique entry is created for each surve
 ```
 key: reminder_metadata_<survey_post_id>
 value:  {
-    type: "meeting_metadata",
+    type: "reminder_metadata",
     meeting_id: "string",
     user_id: "string",
     post_id: "string",
